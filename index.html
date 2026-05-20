@@ -2,733 +2,631 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="format-detection" content="telephone=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
 <title>高考心理急救包</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 <style>
-/* ─── 设计系统：苹果 iOS 风格 ─── */
-:root {
-  --bg:        #F2F2F7;
-  --bg-card:   #FFFFFF;
-  --bg-group:  rgba(255,255,255,0.72);
-  --label:     #000000;
-  --label2:    rgba(60,60,67,0.60);
-  --label3:    rgba(60,60,67,0.30);
-  --sep:       rgba(60,60,67,0.12);
-  --fill:      rgba(120,120,128,0.12);
-  --blue:      #007AFF;
-  --indigo:    #5856D6;
-  --purple:    #AF52DE;
-  --pink:      #FF375F;
-  --green:     #34C759;
-  --orange:    #FF9500;
-  --font: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Noto Sans SC', 'Helvetica Neue', sans-serif;
-  --r:  14px;
-  --r2: 20px;
+/* ═══════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════ */
+:root{
+  --f: -apple-system,BlinkMacSystemFont,'SF Pro Display','Noto Sans SC','Helvetica Neue',sans-serif;
+  --bg: #F5F5F7;
+  --card: #FFFFFF;
+  --ink: #1D1D1F;
+  --ink2: rgba(29,29,31,.55);
+  --ink3: rgba(29,29,31,.28);
+  --sep: rgba(0,0,0,.08);
+  /* section accents */
+  --c-b: #4F46E5;   /* indigo  · 考前 */
+  --c-d: #7C3AED;   /* violet  · 考中 */
+  --c-a: #DB2777;   /* rose    · 考后 */
+  --r: 20px;
+  --r-sm: 12px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--f);
+  background:var(--bg);
+  color:var(--ink);
+  max-width:430px;
+  margin:0 auto;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  padding-bottom:calc(76px + env(safe-area-inset-bottom));
 }
 
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-html { scroll-behavior:smooth; }
-body {
-  font-family: var(--font);
-  background: var(--bg);
-  color: var(--label);
-  max-width: 430px;
-  margin: 0 auto;
-  min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
-  padding-bottom: calc(84px + env(safe-area-inset-bottom));
+/* ═══════════════════════════════════════
+   HERO
+═══════════════════════════════════════ */
+.hero{
+  position:relative;
+  padding:calc(54px + env(safe-area-inset-top)) 28px 36px;
+  background:var(--card);
+  overflow:hidden;
 }
-
-/* ─── HERO ─── */
-.hero {
-  padding: calc(56px + env(safe-area-inset-top)) 20px 28px;
-  text-align: center;
-  background: var(--bg-card);
-  position: relative;
-}
-.hero::after {
+/* 装饰光晕 */
+.hero::before{
   content:'';
   position:absolute;
-  bottom:0; left:0; right:0;
-  height:1px;
-  background: var(--sep);
+  top:-80px;right:-80px;
+  width:280px;height:280px;border-radius:50%;
+  background:radial-gradient(circle,rgba(99,102,241,.14) 0%,transparent 70%);
+  pointer-events:none;
 }
-.hero-emoji {
-  font-size: 64px;
-  display: block;
-  margin-bottom: 12px;
-  line-height: 1;
-  animation: heroFloat 4s ease-in-out infinite;
+.hero::after{
+  content:'';
+  position:absolute;
+  bottom:-60px;left:-60px;
+  width:220px;height:220px;border-radius:50%;
+  background:radial-gradient(circle,rgba(219,39,119,.09) 0%,transparent 70%);
+  pointer-events:none;
 }
-@keyframes heroFloat {
-  0%,100%{ transform:translateY(0); }
-  50%{ transform:translateY(-6px); }
+.hero-inner{position:relative;z-index:1}
+.hero-eye{
+  font-size:11px;font-weight:600;
+  letter-spacing:1.8px;text-transform:uppercase;
+  color:var(--c-b);margin-bottom:14px;
 }
-.hero-title {
-  font-size: 28px;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-  color: var(--label);
-  margin-bottom: 6px;
+.hero-emoji{
+  font-size:72px;line-height:1;display:block;
+  margin-bottom:18px;
+  filter:drop-shadow(0 8px 20px rgba(99,102,241,.25));
+  animation:hFloat 4s ease-in-out infinite;
 }
-.hero-sub {
-  font-size: 15px;
-  color: var(--label2);
-  line-height: 1.5;
-  margin-bottom: 18px;
+@keyframes hFloat{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-8px) rotate(1deg)}}
+.hero-title{
+  font-size:40px;font-weight:800;
+  letter-spacing:-1.5px;line-height:1.05;
+  color:var(--ink);margin-bottom:10px;
 }
-.hero-chips {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-  flex-wrap: wrap;
+.hero-desc{
+  font-size:14px;color:var(--ink2);
+  line-height:1.65;margin-bottom:28px;
 }
-.chip {
-  background: var(--fill);
-  color: var(--label2);
-  font-size: 12px;
-  font-weight: 500;
-  padding: 5px 12px;
-  border-radius: 20px;
+.hero-stats{
+  display:flex;align-items:center;
+  background:rgba(0,0,0,.04);
+  border-radius:var(--r-sm);
+  padding:14px 20px;gap:0;
+}
+.stat{flex:1;text-align:center}
+.stat-n{font-size:26px;font-weight:800;color:var(--ink);display:block;line-height:1}
+.stat-l{font-size:11px;color:var(--ink3);margin-top:3px;display:block}
+.stat-sep{width:1px;height:28px;background:var(--sep);flex-shrink:0}
+
+/* ═══════════════════════════════════════
+   MUSIC BUTTON
+═══════════════════════════════════════ */
+.music-btn{
+  position:fixed;
+  top:calc(14px + env(safe-area-inset-top));right:16px;
+  width:38px;height:38px;border-radius:50%;
+  background:var(--card);
+  box-shadow:0 2px 12px rgba(0,0,0,.12),0 0 0 .5px var(--sep);
+  border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:17px;z-index:600;
+  transition:transform .18s,background .2s,box-shadow .2s;
+}
+.music-btn:active{transform:scale(.88)}
+.music-btn.on{
+  background:var(--c-b);
+  box-shadow:0 4px 18px rgba(79,70,229,.4);
+}
+.music-btn .ico{display:inline-block}
+.music-btn.on .ico{animation:spin 3s linear infinite}
+@keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+
+/* ═══════════════════════════════════════
+   SECTION EYEBROW
+═══════════════════════════════════════ */
+.sec-eye{
+  display:flex;align-items:center;gap:10px;
+  padding:22px 20px 10px;
+}
+.sec-dot{
+  width:8px;height:8px;border-radius:50%;flex-shrink:0;
+}
+.sec-eye-text{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase}
+.before .sec-dot{background:var(--c-b)}.before .sec-eye-text{color:var(--c-b)}
+.during .sec-dot{background:var(--c-d)}.during .sec-eye-text{color:var(--c-d)}
+.after  .sec-dot{background:var(--c-a)}.after  .sec-eye-text{color:var(--c-a)}
+
+/* ═══════════════════════════════════════
+   CARDS
+═══════════════════════════════════════ */
+.cards{padding:0 16px 8px}
+
+.card{
+  position:relative;
+  background:var(--card);
+  border-radius:var(--r);
+  margin-bottom:10px;
+  overflow:hidden;
+  box-shadow:0 2px 0 var(--sep),0 4px 20px rgba(0,0,0,.06);
+  opacity:0;transform:translateY(14px);
+  transition:opacity .38s ease,transform .38s ease;
+}
+.card.vis{opacity:1;transform:translateY(0)}
+
+/* ghost number 背景装饰 */
+.card::before{
+  content:attr(data-n);
+  position:absolute;
+  top:-6px;right:14px;
+  font-size:80px;font-weight:900;
+  line-height:1;letter-spacing:-3px;
+  opacity:.045;pointer-events:none;
+  transition:opacity .3s;
+}
+.card.open::before{opacity:.025}
+.before .card::before{color:var(--c-b)}
+.during .card::before{color:var(--c-d)}
+.after  .card::before{color:var(--c-a)}
+
+.card-hd{
+  padding:18px 18px 18px;
+  display:flex;align-items:center;gap:14px;
+  cursor:pointer;
+  -webkit-user-select:none;user-select:none;
+  transition:background .15s;
+}
+.card-hd:active{background:rgba(0,0,0,.03)}
+
+/* 图标盒 */
+.card-ico{
+  width:48px;height:48px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;flex-shrink:0;
+}
+.before .card-ico{background:rgba(79,70,229,.1)}
+.during .card-ico{background:rgba(124,58,237,.1)}
+.after  .card-ico{background:rgba(219,39,119,.1)}
+
+.card-body-txt{flex:1;min-width:0}
+.card-tag{
+  font-size:10px;font-weight:700;letter-spacing:.8px;
+  text-transform:uppercase;margin-bottom:4px;
+}
+.before .card-tag{color:var(--c-b)}
+.during .card-tag{color:var(--c-d)}
+.after  .card-tag{color:var(--c-a)}
+
+.card-name{font-size:17px;font-weight:700;letter-spacing:-.3px;margin-bottom:3px}
+.card-sub{font-size:12.5px;color:var(--ink2);line-height:1.4}
+
+/* 展开箭头 */
+.chev{
+  width:28px;height:28px;border-radius:50%;flex-shrink:0;
+  background:rgba(0,0,0,.05);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:600;color:var(--ink3);
+  transition:transform .3s cubic-bezier(.4,0,.2,1),background .2s;
+}
+.card.open .chev{transform:rotate(90deg)}
+.before .card.open .chev{background:rgba(79,70,229,.12);color:var(--c-b)}
+.during .card.open .chev{background:rgba(124,58,237,.12);color:var(--c-d)}
+.after  .card.open .chev{background:rgba(219,39,119,.12);color:var(--c-a)}
+
+/* 折叠面板 */
+.card-panel{max-height:0;overflow:hidden;transition:max-height .48s cubic-bezier(.4,0,.2,1)}
+.card.open .card-panel{max-height:1800px}
+.card-panel-in{
+  padding:0 18px 20px;
+  border-top:1px solid var(--sep);
+  padding-top:16px;
 }
 
-/* ─── 音乐按钮（右上角）─── */
-.audio-btn {
-  position: fixed;
-  top: calc(12px + env(safe-area-inset-top));
-  right: 16px;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: var(--bg-card);
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 17px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-  z-index: 500;
-  transition: transform .18s;
+/* 场景标签 */
+.scene{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:12px;font-weight:500;
+  padding:5px 12px;border-radius:20px;
+  margin-bottom:16px;
 }
-.audio-btn:active { transform: scale(0.88); }
-.audio-btn.playing { background: var(--blue); }
-.audio-btn .note { display:inline-block; }
-.audio-btn.playing .note { animation: notePulse 1.8s ease-in-out infinite; }
-@keyframes notePulse {
-  0%,100%{ transform:scale(1) rotate(-6deg); }
-  50%{ transform:scale(1.15) rotate(6deg); }
+.before .scene{background:rgba(79,70,229,.07);color:var(--c-b)}
+.during .scene{background:rgba(124,58,237,.07);color:var(--c-d)}
+.after  .scene{background:rgba(219,39,119,.07);color:var(--c-a)}
+
+/* 步骤 */
+.slabel{
+  font-size:10.5px;font-weight:700;letter-spacing:.8px;
+  text-transform:uppercase;color:var(--ink3);
+  margin-bottom:12px;
+}
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;gap:12px;align-items:flex-start}
+.sn{
+  width:22px;height:22px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:#fff;flex-shrink:0;margin-top:2px;
+}
+.before .sn{background:var(--c-b)}
+.during .sn{background:var(--c-d)}
+.after  .sn{background:var(--c-a)}
+.st{font-size:14px;line-height:1.75;color:#1c1c1e;flex:1}
+.st strong{color:var(--ink);font-weight:600}
+
+/* 提示框 */
+.tip{
+  margin-top:16px;padding:12px 14px;
+  border-radius:10px;font-size:13px;line-height:1.68;
+  border-left:3px solid;
+}
+.before .tip{background:rgba(79,70,229,.06);border-color:var(--c-b);color:#3730a3}
+.during .tip{background:rgba(124,58,237,.06);border-color:var(--c-d);color:#5b21b6}
+.after  .tip{background:rgba(219,39,119,.06);border-color:var(--c-a);color:#9d174d}
+
+/* 引用框 */
+.quote{
+  border-radius:12px;padding:18px;
+  margin:12px 0;text-align:center;
+}
+.after .quote{background:rgba(219,39,119,.06)}
+.quote-t{font-size:17px;font-weight:700;line-height:1.65;letter-spacing:-.2px}
+.after .quote-t{color:#9d174d}
+
+/* 四句话 */
+.four{border-radius:12px;overflow:hidden;margin:12px 0}
+.after .four{background:rgba(219,39,119,.05)}
+.frow{display:flex;align-items:flex-start;gap:10px;padding:11px 14px}
+.frow+.frow{border-top:1px solid rgba(219,39,119,.1)}
+.fi{font-size:16px;flex-shrink:0;padding-top:1px}
+.fm{font-size:15px;font-weight:700;color:#9d174d}
+.fs{font-size:12px;color:var(--ink2);margin-top:2px;line-height:1.4}
+
+/* 警告 */
+.warn{
+  border-radius:10px;padding:11px 13px;margin-bottom:12px;
+  display:flex;gap:9px;align-items:flex-start;
+}
+.warn-def{background:rgba(255,149,0,.1)}
+.warn-rose{background:rgba(219,39,119,.08)}
+.wi{font-size:18px;flex-shrink:0}
+.wt{font-size:13px;line-height:1.62;font-weight:500}
+.warn-def .wt{color:#7a4200}.warn-rose .wt{color:#9d174d}
+
+.sublabel{
+  font-size:11px;font-weight:700;letter-spacing:.5px;
+  color:var(--ink3);margin:14px 0 8px;text-transform:uppercase;
 }
 
-/* ─── 分区头 ─── */
-.section-head {
-  padding: 22px 20px 8px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
+/* ═══════════════════════════════════════
+   TAB BAR
+═══════════════════════════════════════ */
+.tabbar{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:430px;
+  background:rgba(255,255,255,.85);
+  -webkit-backdrop-filter:blur(24px) saturate(180%);
+  backdrop-filter:blur(24px) saturate(180%);
+  border-top:.5px solid rgba(0,0,0,.1);
+  display:flex;
+  padding:6px 8px calc(6px + env(safe-area-inset-bottom));
+  z-index:500;gap:4px;
 }
-.section-head-icon {
-  width: 34px; height: 34px;
-  border-radius: 9px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 18px;
-  flex-shrink: 0;
+.tab{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;gap:3px;
+  padding:8px 4px 4px;border-radius:14px;
+  border:none;background:none;cursor:pointer;
+  font-family:var(--f);
+  transition:background .2s;
 }
-.section-head-text strong {
-  font-size: 17px;
-  font-weight: 600;
-  display: block;
-  margin-bottom: 2px;
+.tab:active{opacity:.6}
+.tab-emoji{font-size:20px;transition:transform .2s}
+.tab.active .tab-emoji{transform:scale(1.12)}
+.tab-label{font-size:10px;font-weight:600;letter-spacing:.3px;color:var(--ink3);transition:color .2s}
+.tab[data-t="before"].active{background:rgba(79,70,229,.08)}
+.tab[data-t="before"].active .tab-label{color:var(--c-b)}
+.tab[data-t="during"].active{background:rgba(124,58,237,.08)}
+.tab[data-t="during"].active .tab-label{color:var(--c-d)}
+.tab[data-t="after"].active{background:rgba(219,39,119,.08)}
+.tab[data-t="after"].active .tab-label{color:var(--c-a)}
+
+/* ═══════════════════════════════════════
+   SECTION SHOW/HIDE
+═══════════════════════════════════════ */
+.sec{display:none}
+.sec.on{display:block;animation:secIn .28s cubic-bezier(.4,0,.2,1)}
+@keyframes secIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══════════════════════════════════════
+   TOP BUTTON
+═══════════════════════════════════════ */
+.topbtn{
+  position:fixed;bottom:calc(84px + env(safe-area-inset-bottom));right:16px;
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(255,255,255,.9);
+  box-shadow:0 2px 12px rgba(0,0,0,.12);
+  border:none;cursor:pointer;font-size:15px;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--ink2);opacity:0;transform:translateY(8px);
+  transition:opacity .25s,transform .25s;z-index:400;
 }
-.section-head-text span {
-  font-size: 13px;
-  color: var(--label2);
+.topbtn.show{opacity:1;transform:translateY(0)}
+
+/* ═══════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════ */
+.footer{
+  text-align:center;padding:16px 20px 8px;
+  font-size:11.5px;color:var(--ink3);line-height:1.9;
 }
 
-.before .section-head-icon { background: rgba(88,86,214,.12); }
-.during .section-head-icon { background: rgba(175,82,222,.12); }
-.after  .section-head-icon { background: rgba(255,55,95,.12); }
-
-/* ─── 内容区 ─── */
-.content {
-  padding: 6px 16px 12px;
-}
-.section { display:none; }
-.section.active {
-  display: block;
-  animation: secIn .28s cubic-bezier(.4,0,.2,1);
-}
-@keyframes secIn {
-  from{ opacity:0; transform:translateY(10px); }
-  to  { opacity:1; transform:translateY(0); }
-}
-
-/* ─── CARD ─── */
-.card {
-  background: var(--bg-card);
-  border-radius: var(--r2);
-  margin-bottom: 10px;
-  overflow: hidden;
-  opacity: 0;
-  transform: translateY(12px);
-  transition: opacity .38s ease, transform .38s ease;
-  /* iOS 列表分割线效果 */
-  box-shadow: 0 1px 0 0 var(--sep), 0 2px 12px rgba(0,0,0,.05);
-}
-.card.visible { opacity:1; transform:translateY(0); }
-
-.card-header {
-  padding: 15px 16px;
-  display: flex;
-  align-items: center;
-  gap: 13px;
-  cursor: pointer;
-  -webkit-user-select: none;
-  user-select: none;
-  transition: background .15s;
-}
-.card-header:active { background: var(--fill); }
-
-.card-num {
-  width: 36px; height: 36px;
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 20px;
-  flex-shrink: 0;
-}
-.card-info { flex:1; min-width:0; }
-.card-tag {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: .5px;
-  text-transform: uppercase;
-  margin-bottom: 3px;
-  opacity: .45;
-}
-.card-title {
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 1.25;
-  margin-bottom: 3px;
-  letter-spacing: -.2px;
-}
-.card-brief {
-  font-size: 13px;
-  color: var(--label2);
-  line-height: 1.45;
-}
-
-.chevron {
-  font-size: 14px;
-  color: var(--label3);
-  flex-shrink: 0;
-  transition: transform .28s cubic-bezier(.4,0,.2,1);
-  font-weight: 600;
-}
-.card.open .chevron { transform: rotate(90deg); }
-
-/* ─── 展开内容 ─── */
-.card-body {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height .46s cubic-bezier(.4,0,.2,1);
-}
-.card.open .card-body { max-height: 1800px; }
-.card-body-inner {
-  padding: 0 16px 18px;
-  border-top: 1px solid var(--sep);
-  padding-top: 14px;
-}
-
-.scene-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 12px;
-  font-weight: 500;
-  padding: 5px 11px;
-  border-radius: 8px;
-  margin-bottom: 14px;
-}
-.steps-label {
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: .4px;
-  color: var(--label2);
-  margin-bottom: 10px;
-  text-transform: uppercase;
-}
-.steps { display:flex; flex-direction:column; gap:11px; }
-.step { display:flex; gap:11px; align-items:flex-start; }
-.step-dot {
-  width: 22px; height: 22px;
-  border-radius: 50%;
-  display: flex; align-items:center; justify-content:center;
-  font-size: 11px; font-weight:700;
-  color: #fff;
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-.step-text {
-  font-size: 14px;
-  line-height: 1.72;
-  color: #1c1c1e;
-  flex:1;
-}
-.step-text strong { color: var(--label); }
-
-.tip-box {
-  margin-top: 14px;
-  padding: 11px 13px;
-  border-radius: 10px;
-  font-size: 13px;
-  line-height: 1.65;
-}
-
-/* ─── 四句话卡片 ─── */
-.four-box {
-  border-radius: 12px;
-  padding: 4px 0;
-  margin: 12px 0;
-}
-.sentence-row {
-  display:flex; align-items:flex-start; gap:10px;
-  padding: 10px 14px;
-}
-.sentence-row + .sentence-row { border-top: 1px solid var(--sep); }
-.s-icon { font-size:17px; flex-shrink:0; padding-top:1px; }
-.s-main { font-size:15px; font-weight:600; }
-.s-sub  { font-size:12px; color:var(--label2); line-height:1.4; margin-top:1px; }
-
-/* ─── 引用框 ─── */
-.quote-box {
-  border-radius: 12px;
-  padding: 16px;
-  margin: 12px 0;
-  text-align: center;
-}
-.quote-text {
-  font-size: 17px;
-  font-weight: 600;
-  line-height: 1.65;
-  letter-spacing: -.2px;
-}
-
-/* ─── 警告栏 ─── */
-.warn-bar {
-  border-radius: 10px;
-  padding: 11px 13px;
-  margin-bottom: 12px;
-  display:flex; gap:9px; align-items:flex-start;
-  background: rgba(255,149,0,.1);
-}
-.warn-icon { font-size:18px; flex-shrink:0; }
-.warn-text { font-size:13px; line-height:1.6; color:#7a4800; font-weight:500; }
-
-.sub-label {
-  font-size:12px; font-weight:700; color:var(--label2);
-  margin:14px 0 8px;
-  letter-spacing:.3px;
-}
-
-/* ─── 主题色：考前（indigo）─── */
-.before .card-tag  { color: var(--indigo); }
-.before .card-num  { background: rgba(88,86,214,.1); }
-.before .scene-tag { background: rgba(88,86,214,.08); color: var(--indigo); }
-.before .step-dot  { background: var(--indigo); }
-.before .tip-box   { background: rgba(88,86,214,.07); color: #3634a3; }
-.before .chevron   { color: var(--indigo); }
-
-/* ─── 主题色：考中（purple）─── */
-.during .card-tag  { color: var(--purple); }
-.during .card-num  { background: rgba(175,82,222,.1); }
-.during .scene-tag { background: rgba(175,82,222,.08); color: var(--purple); }
-.during .step-dot  { background: var(--purple); }
-.during .tip-box   { background: rgba(175,82,222,.07); color: #6e2b8e; }
-.during .chevron   { color: var(--purple); }
-
-/* ─── 主题色：考后（pink）─── */
-.after .card-tag   { color: var(--pink); }
-.after .card-num   { background: rgba(255,55,95,.1); }
-.after .scene-tag  { background: rgba(255,55,95,.08); color: var(--pink); }
-.after .step-dot   { background: var(--pink); }
-.after .tip-box    { background: rgba(255,55,95,.07); color: #a8001e; }
-.after .chevron    { color: var(--pink); }
-.after .four-box   { background: rgba(255,55,95,.06); }
-.after .quote-box  { background: rgba(255,55,95,.06); }
-.after .quote-text { color: #9b0026; }
-
-/* ─── 底部 TAB BAR（iOS 风格）─── */
-.tab-bar {
-  position: fixed;
-  bottom: 0; left: 50%; transform: translateX(-50%);
-  width: 100%; max-width: 430px;
-  background: rgba(249,249,249,0.94);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  backdrop-filter: blur(20px) saturate(180%);
-  border-top: 1px solid var(--sep);
-  display: flex;
-  padding-bottom: env(safe-area-inset-bottom);
-  z-index: 400;
-}
-.tab-item {
-  flex:1;
-  display:flex; flex-direction:column;
-  align-items:center; justify-content:center;
-  padding: 8px 4px 4px;
-  border:none; background:none;
-  cursor:pointer; font-family:var(--font);
-  gap: 3px;
-  transition: opacity .15s;
-}
-.tab-item:active { opacity: .6; }
-.tab-icon-wrap {
-  width: 26px; height: 26px;
-  display:flex; align-items:center; justify-content:center;
-  border-radius: 7px;
-  font-size: 18px;
-  transition: background .2s, transform .2s;
-}
-.tab-label {
-  font-size: 10px;
-  font-weight: 500;
-  color: var(--label3);
-  transition: color .2s;
-  letter-spacing: .2px;
-}
-.tab-item.active .tab-icon-wrap { transform: scale(1.08); }
-.tab-item[data-tab="before"].active .tab-label { color: var(--indigo); }
-.tab-item[data-tab="during"].active .tab-label { color: var(--purple); }
-.tab-item[data-tab="after"].active  .tab-label { color: var(--pink); }
-.tab-item[data-tab="before"].active .tab-icon-wrap { background: rgba(88,86,214,.12); }
-.tab-item[data-tab="during"].active .tab-icon-wrap { background: rgba(175,82,222,.12); }
-.tab-item[data-tab="after"].active  .tab-icon-wrap { background: rgba(255,55,95,.12); }
-
-/* ─── FOOTER ─── */
-.footer {
-  text-align:center;
-  padding:20px 20px 12px;
-  font-size:12px;
-  color:var(--label3);
-  line-height:1.8;
-}
-
-/* ─── 回到顶部 ─── */
-.top-btn {
-  position:fixed; bottom:calc(88px + env(safe-area-inset-bottom)); right:16px;
-  width:36px; height:36px; border-radius:50%;
-  background:var(--bg-card); box-shadow:0 2px 10px rgba(0,0,0,.12);
-  border:none; cursor:pointer; font-size:16px;
-  display:flex; align-items:center; justify-content:center;
-  color:var(--label2);
-  opacity:0; transform:translateY(8px);
-  transition: opacity .25s, transform .25s;
-  z-index:300;
-}
-.top-btn.show { opacity:1; transform:translateY(0); }
-
-@media (prefers-reduced-motion:reduce) {
-  *,*::before,*::after{ animation-duration:.01ms!important; transition-duration:.01ms!important; }
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
 }
 </style>
 </head>
 <body>
 
 <!-- 音乐按钮 -->
-<button class="audio-btn" id="audioBtn" title="背景音乐">
-  <span class="note">🎵</span>
-</button>
+<button class="music-btn" id="mBtn"><span class="ico">🎵</span></button>
 
-<!-- HERO -->
+<!-- ══ HERO ══ -->
 <header class="hero">
-  <span class="hero-emoji">🧠</span>
-  <h1 class="hero-title">高考心理急救包</h1>
-  <p class="hero-sub">9 个科学方法，考前考中考后全程护航</p>
-  <div class="hero-chips">
-    <span class="chip">📚 考前准备</span>
-    <span class="chip">⚡ 考场急救</span>
-    <span class="chip">🌟 考后复原</span>
+  <div class="hero-inner">
+    <p class="hero-eye">心理科学 · 实测有效</p>
+    <span class="hero-emoji">🧠</span>
+    <h1 class="hero-title">高考心理<br>急救包</h1>
+    <p class="hero-desc">9 个经过验证的科学减压方法<br>考前 · 考中 · 考后，全程陪伴</p>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-n">3</span><span class="stat-l">考前方法</span></div>
+      <div class="stat-sep"></div>
+      <div class="stat"><span class="stat-n">3</span><span class="stat-l">考场急救</span></div>
+      <div class="stat-sep"></div>
+      <div class="stat"><span class="stat-n">3</span><span class="stat-l">考后复原</span></div>
+    </div>
   </div>
 </header>
 
-<!-- 主内容 -->
 <main>
 
-<!-- ════ 考前准备 ════ -->
-<div class="section before active" id="before">
-  <div class="section-head">
-    <div class="section-head-icon">📚</div>
-    <div class="section-head-text">
-      <strong>考前准备</strong>
-      <span>进考场前建立强大心理防线</span>
-    </div>
-  </div>
-  <div class="content">
+<!-- ══════════════ 考前准备 ══════════════ -->
+<div class="sec before on" id="before">
+  <div class="sec-eye"><div class="sec-dot"></div><span class="sec-eye-text">考前准备 · Before Exam</span></div>
+  <div class="cards">
 
-    <!-- 01 -->
-    <div class="card" onclick="toggleCard(this)">
-      <div class="card-header">
-        <div class="card-num">🌸</div>
-        <div class="card-info">
+    <div class="card" data-n="01" onclick="toggle(this)">
+      <div class="card-hd">
+        <div class="card-ico">🌸</div>
+        <div class="card-body-txt">
           <div class="card-tag">方法 01</div>
-          <div class="card-title">收回投射法</div>
-          <div class="card-brief">卸下父母期待，轻装上阵</div>
+          <div class="card-name">收回投射法</div>
+          <div class="card-sub">卸下父母期待，轻装上阵</div>
         </div>
-        <div class="chevron">›</div>
+        <div class="chev">›</div>
       </div>
-      <div class="card-body"><div class="card-body-inner">
-        <div class="scene-tag">🎯 应对：父母与外界的压力</div>
-        <div class="steps-label">实操步骤</div>
+      <div class="card-panel"><div class="card-panel-in">
+        <div class="scene">🎯 应对：父母与外界的压力</div>
+        <div class="slabel">实操步骤</div>
         <div class="steps">
-          <div class="step"><div class="step-dot">1</div><div class="step-text">找个安静的地方<strong>闭上眼睛</strong>，想象给你压力最大的人，站在离你两三步远的地方。</div></div>
-          <div class="step"><div class="step-dot">2</div><div class="step-text">想象他带给你的压力，<strong>变成一粒粒小雪花或光点</strong>，慢慢从你身体里剥离，全部飞回到那个人身上。</div></div>
-          <div class="step"><div class="step-dot">3</div><div class="step-text">在心里默念：<br><br><strong>「我把你们对我的期待交还给你们，但我把你们对我的爱深深放在心里。这样，我就能轻装上阵，轻松地做我自己。」</strong></div></div>
-          <div class="step"><div class="step-dot">4</div><div class="step-text">想象在你们中间画一条线——这条线叫<strong>「界限」</strong>。不属于你的压力，全部挡在界限之外。</div></div>
+          <div class="step"><div class="sn">1</div><div class="st">闭上眼睛，想象给你压力最大的人，站在离你两三步远的地方。</div></div>
+          <div class="step"><div class="sn">2</div><div class="st">想象他带给你的压力，<strong>变成一粒粒雪花或光点</strong>，从你的身体里慢慢剥离，全部飞回到他身上。</div></div>
+          <div class="step"><div class="sn">3</div><div class="st">在心里默念：<br><br><strong>「我把你们对我的期待交还给你们，但我把你们对我的爱深深放在心里。这样，我就能轻装上阵，轻松地做我自己。」</strong></div></div>
+          <div class="step"><div class="sn">4</div><div class="st">想象在你们中间画一条线——这条线叫<strong>「界限」</strong>。不属于你的压力，全部挡在界限之外。</div></div>
         </div>
-        <div class="tip-box">💡 压垮孩子的从来不是分数，而是背负了太重的期待。做完这步，内心会瞬间轻松一大半。</div>
+        <div class="tip">💡 压垮孩子的从来不是分数，而是背负了太重的期待。做完这步，内心会瞬间轻松一大半。</div>
       </div></div>
     </div>
 
-    <!-- 02 -->
-    <div class="card" onclick="toggleCard(this)">
-      <div class="card-header">
-        <div class="card-num">🔮</div>
-        <div class="card-info">
+    <div class="card" data-n="02" onclick="toggle(this)">
+      <div class="card-hd">
+        <div class="card-ico">🔮</div>
+        <div class="card-body-txt">
           <div class="card-tag">方法 02</div>
-          <div class="card-title">借未来画面法</div>
-          <div class="card-brief">从未来借力，化解「一考定终身」的恐惧</div>
+          <div class="card-name">借未来画面法</div>
+          <div class="card-sub">从未来借力，化解「一考定终身」恐惧</div>
         </div>
-        <div class="chevron">›</div>
+        <div class="chev">›</div>
       </div>
-      <div class="card-body"><div class="card-body-inner">
-        <div class="scene-tag">🎯 应对：把高考当赌博的焦虑与恐惧</div>
-        <div class="steps-label">实操步骤</div>
+      <div class="card-panel"><div class="card-panel-in">
+        <div class="scene">🎯 应对：把高考当赌博的焦虑</div>
+        <div class="slabel">实操步骤</div>
         <div class="steps">
-          <div class="step"><div class="step-dot">1</div><div class="step-text">闭上眼睛，<strong>把时间线拉长</strong>——想象两年后，你已经实现了目标，坐在理想大学的教室里。</div></div>
-          <div class="step"><div class="step-dot">2</div><div class="step-text">仔细看那个画面：周围是什么环境？那个<strong>更优秀、更自信、更快乐的你</strong>，正在做什么？</div></div>
-          <div class="step"><div class="step-dot">3</div><div class="step-text">想象那个未来的你，正微笑着走向现在的你，感谢你现在的辛苦。走过去，<strong>紧紧拥抱</strong>，互相说几句悄悄话。</div></div>
-          <div class="step"><div class="step-dot">4</div><div class="step-text">记住那个充满力量的画面。遇到困难时，就把这个画面调出来——<strong>借未来的力量，赋能现在的自己。</strong></div></div>
+          <div class="step"><div class="sn">1</div><div class="st">闭上眼睛，<strong>把时间线拉长</strong>——想象两年后，你坐在理想大学的教室里。</div></div>
+          <div class="step"><div class="sn">2</div><div class="st">仔细看那个画面：那个<strong>更优秀、更自信、更快乐的你</strong>，正在做什么？</div></div>
+          <div class="step"><div class="sn">3</div><div class="st">想象那个未来的你，微笑着走过来，感谢你现在的辛苦。走过去，<strong>紧紧拥抱</strong>，互相说几句悄悄话。</div></div>
+          <div class="step"><div class="sn">4</div><div class="st">记住那个充满力量的画面。遇到困难时，就把它调出来——<strong>借未来的力量，赋能现在的自己。</strong></div></div>
         </div>
-        <div class="tip-box">💡 高考只是通往未来的一个节点，不是赌博。用已实现的未来画面给现在的自己充电。</div>
+        <div class="tip">💡 高考只是通往未来的一个节点，不是赌博。用未来已实现的画面给现在的自己充电。</div>
       </div></div>
     </div>
 
-    <!-- 03 -->
-    <div class="card" onclick="toggleCard(this)">
-      <div class="card-header">
-        <div class="card-num">🌬️</div>
-        <div class="card-info">
+    <div class="card" data-n="03" onclick="toggle(this)">
+      <div class="card-hd">
+        <div class="card-ico">🌬️</div>
+        <div class="card-body-txt">
           <div class="card-tag">方法 03</div>
-          <div class="card-title">4-7-8 呼吸法</div>
-          <div class="card-brief">失眠心慌，2 分钟强制镇静大脑</div>
+          <div class="card-name">4-7-8 呼吸法</div>
+          <div class="card-sub">失眠心慌，2 分钟强制镇静大脑</div>
         </div>
-        <div class="chevron">›</div>
+        <div class="chev">›</div>
       </div>
-      <div class="card-body"><div class="card-body-inner">
-        <div class="scene-tag">🎯 应对：考前失眠、心慌手抖</div>
-        <div class="steps-label">记住三个数字：4 · 7 · 8</div>
+      <div class="card-panel"><div class="card-panel-in">
+        <div class="scene">🎯 应对：失眠、心慌手抖</div>
+        <div class="slabel">记住三个数字：4 · 7 · 8</div>
         <div class="steps">
-          <div class="step"><div class="step-dot" style="font-size:12px;font-weight:900;">4</div><div class="step-text"><strong>鼻子吸气 4 秒</strong>——感觉把空气吸进肚子里，小腹慢慢鼓起来。</div></div>
-          <div class="step"><div class="step-dot" style="font-size:12px;font-weight:900;">7</div><div class="step-text"><strong>憋住呼吸 7 秒</strong>——让氧气充分溶入血液。</div></div>
-          <div class="step"><div class="step-dot" style="font-size:12px;font-weight:900;">8</div><div class="step-text"><strong>嘴巴呼气 8 秒</strong>——微张嘴慢慢吐气，肚子随着收回。</div></div>
+          <div class="step"><div class="sn" style="font-size:11px;font-weight:900">4</div><div class="st"><strong>鼻子吸气 4 秒</strong>——把空气吸进肚子里，小腹慢慢鼓起来。</div></div>
+          <div class="step"><div class="sn" style="font-size:11px;font-weight:900">7</div><div class="st"><strong>憋住呼吸 7 秒</strong>——让氧气充分溶入血液。</div></div>
+          <div class="step"><div class="sn" style="font-size:11px;font-weight:900">8</div><div class="st"><strong>嘴巴呼气 8 秒</strong>——微张嘴慢慢吐气，肚子随着收回。</div></div>
         </div>
-        <div class="tip-box">💡 连做 3 次，强制唤醒副交感神经，心跳变慢、大脑迅速镇静。睡前配合自然场景冥想，不到 2 分钟入睡。</div>
+        <div class="tip">💡 连做 3 次，强制唤醒副交感神经，心跳变慢、大脑迅速镇静。睡前配合冥想，不到 2 分钟入睡。</div>
       </div></div>
     </div>
 
   </div>
 </div>
 
-<!-- ════ 考场急救 ════ -->
-<div class="section during" id="during">
-  <div class="section-head">
-    <div class="section-head-icon">⚡</div>
-    <div class="section-head-text">
-      <strong>考场急救</strong>
-      <span>进了考场随时找回最佳状态</span>
-    </div>
-  </div>
-  <div class="content">
+<!-- ══════════════ 考场急救 ══════════════ -->
+<div class="sec during" id="during">
+  <div class="sec-eye"><div class="sec-dot"></div><span class="sec-eye-text">考场急救 · In The Exam</span></div>
+  <div class="cards">
 
-    <!-- 04 -->
-    <div class="card" onclick="toggleCard(this)">
-      <div class="card-header">
-        <div class="card-num">⚡</div>
-        <div class="card-info">
+    <div class="card" data-n="04" onclick="toggle(this)">
+      <div class="card-hd">
+        <div class="card-ico">⚡</div>
+        <div class="card-body-txt">
           <div class="card-tag">方法 04</div>
-          <div class="card-title">天地人法</div>
-          <div class="card-brief">发卷前黄金 10 分钟，给自己「快充」</div>
+          <div class="card-name">天地人法</div>
+          <div class="card-sub">发卷前黄金 10 分钟，给自己「快充」</div>
         </div>
-        <div class="chevron">›</div>
+        <div class="chev">›</div>
       </div>
-      <div class="card-body"><div class="card-body-inner">
-        <div class="scene-tag">🎯 场景：进考场后、发卷前的 10 分钟</div>
-        <div class="steps-label">实操步骤</div>
+      <div class="card-panel"><div class="card-panel-in">
+        <div class="scene">🎯 场景：进考场后、发卷前</div>
+        <div class="slabel">实操步骤</div>
         <div class="steps">
-          <div class="step"><div class="step-dot" style="font-size:11px;">地</div><div class="step-text"><strong>踏地</strong>——平稳坐在椅子上闭眼。想象双脚稳稳踏着大地，大地的沉稳与力量顺着双脚流进你的身体。</div></div>
-          <div class="step"><div class="step-dot" style="font-size:11px;">天</div><div class="step-text"><strong>接天</strong>——想象头顶出现一道光，宇宙清醒、智慧的能量从头顶传达到全身各部位。</div></div>
-          <div class="step"><div class="step-dot" style="font-size:11px;">人</div><div class="step-text"><strong>汇聚</strong>——大地的力量与宇宙的能量在胸口汇聚，你就像一节正在<strong>快充的电池</strong>，能量瞬间饱满。</div></div>
-          <div class="step"><div class="step-dot">✓</div><div class="step-text">做几个深呼吸，等发卷时睁开眼——<strong>大脑会异常清醒。</strong></div></div>
+          <div class="step"><div class="sn" style="font-size:11px">地</div><div class="st"><strong>踏地</strong>——闭眼，想象双脚稳稳踏着大地，沉稳的力量顺着双脚流进全身。</div></div>
+          <div class="step"><div class="sn" style="font-size:11px">天</div><div class="st"><strong>接天</strong>——想象头顶洒下一道光，宇宙清醒、智慧的能量从头顶传达到全身。</div></div>
+          <div class="step"><div class="sn" style="font-size:11px">人</div><div class="st"><strong>汇聚</strong>——两股能量在胸口汇聚，你就像一节正在<strong>快充的电池</strong>，能量瞬间饱满。</div></div>
+          <div class="step"><div class="sn">✓</div><div class="st">做几个深呼吸，等发卷时睁开眼——<strong>大脑会异常清醒。</strong></div></div>
         </div>
-        <div class="tip-box">💡 发卷前最容易胡思乱想，利用这个时间充电而不是发呆，是高手才会用的技巧。</div>
+        <div class="tip">💡 发卷前最容易胡思乱想，利用这个时间充电，是高手才会用的技巧。</div>
       </div></div>
     </div>
 
-    <!-- 05 -->
-    <div class="card" onclick="toggleCard(this)">
-      <div class="card-header">
-        <div class="card-num">💪</div>
-        <div class="card-info">
+    <div class="card" data-n="05" onclick="toggle(this)">
+      <div class="card-hd">
+        <div class="card-ico">💪</div>
+        <div class="card-body-txt">
           <div class="card-tag">方法 05</div>
-          <div class="card-title">步步高法</div>
-          <div class="card-brief">看到弱势学科就退缩？瞬间拉升自信</div>
+          <div class="card-name">步步高法</div>
+          <div class="card-sub">看到弱势学科卷子就退缩？瞬间拉升自信</div>
         </div>
-        <div class="chevron">›</div>
+        <div class="chev">›</div>
       </div>
-      <div class="card-body"><div class="card-body-inner">
-        <div class="scene-tag">🎯 场景：看到弱势科目卷子，极度恐惧</div>
-        <div class="steps-label">实操步骤</div>
+      <div class="card-panel"><div class="card-panel-in">
+        <div class="scene">🎯 场景：看到弱势科目，极度恐惧</div>
+        <div class="slabel">实操步骤</div>
         <div class="steps">
-          <div class="step"><div class="step-dot">1</div><div class="step-text">闭上眼睛，想象你的内在有一个「自己」<strong>站了起来。</strong></div></div>
-          <div class="step"><div class="step-dot">2</div><div class="step-text">想象这个自己往前走了一步，身体瞬间<strong>变高变大</strong>；再走一步，更高大强壮。</div></div>
-          <div class="step"><div class="step-dot">3</div><div class="step-text">与此同时，面前的试卷、课桌、监考老师，都随着你的变大而<strong>不断缩小。</strong></div></div>
-          <div class="step"><div class="step-dot">4</div><div class="step-text">直到你感觉自己像个巨人，可以低头俯视并<strong>掌控这张小小的试卷</strong>——带着这种「降维打击」的气场睁开眼。</div></div>
+          <div class="step"><div class="sn">1</div><div class="st">闭眼，想象你的内在有一个「自己」<strong>站了起来。</strong></div></div>
+          <div class="step"><div class="sn">2</div><div class="st">想象这个自己往前走一步，身体<strong>变高变大</strong>；再走一步，更加高大强壮。</div></div>
+          <div class="step"><div class="sn">3</div><div class="st">面前的试卷、课桌、监考老师，都随着你变大而<strong>不断缩小。</strong></div></div>
+          <div class="step"><div class="sn">4</div><div class="st">你已是巨人，可以俯视并<strong>掌控这张小小的试卷</strong>——带着这种气场睁开眼睛。</div></div>
         </div>
-        <div class="tip-box">💡 恐惧感会在这个瞬间消失。你不是被试卷审视的，你是在掌控它的。</div>
+        <div class="tip">💡 恐惧感会在这个瞬间消失。你不是被试卷审视的，你是在掌控它的。</div>
       </div></div>
     </div>
 
-    <!-- 06 -->
-    <div class="card" onclick="toggleCard(this)">
-      <div class="card-header">
-        <div class="card-num">📝</div>
-        <div class="card-info">
+    <div class="card" data-n="06" onclick="toggle(this)">
+      <div class="card-hd">
+        <div class="card-ico">📝</div>
+        <div class="card-body-txt">
           <div class="card-tag">方法 06</div>
-          <div class="card-title">暂存纸法</div>
-          <div class="card-brief">大脑突然空白？别死磕，用这招解锁记忆</div>
+          <div class="card-name">暂存纸法</div>
+          <div class="card-sub">大脑突然空白？别死磕，让记忆自然解锁</div>
         </div>
-        <div class="chevron">›</div>
+        <div class="chev">›</div>
       </div>
-      <div class="card-body"><div class="card-body-inner">
-        <div class="scene-tag">🎯 场景：背过的公式死活想不起来</div>
-        <div class="warn-bar">
-          <span class="warn-icon">⚠️</span>
-          <div class="warn-text">这叫<strong>「舌尖现象」</strong>——过度紧张导致的大脑短暂「死机」。越死磕，潜意识越锁死。</div>
+      <div class="card-panel"><div class="card-panel-in">
+        <div class="scene">🎯 场景：背过的公式想不起来</div>
+        <div class="warn warn-def">
+          <span class="wi">⚠️</span>
+          <div class="wt">这叫<strong>「舌尖现象」</strong>——过度紧张导致的大脑「死机」。越死磕，潜意识越锁死。</div>
         </div>
-        <div class="steps-label">正确做法</div>
+        <div class="slabel">正确做法</div>
         <div class="steps">
-          <div class="step"><div class="step-dot">1</div><div class="step-text"><strong>立刻停！</strong>千万不要死磕，先调整一下呼吸。</div></div>
-          <div class="step"><div class="step-dot">2</div><div class="step-text">拿过草稿纸，在角落画一个方框，写上<strong>「暂存区」</strong>三个字。</div></div>
-          <div class="step"><div class="step-dot">3</div><div class="step-text">把卡壳那道题的题号写进暂存区，告诉自己：<strong>「我先把题存在这，一会再来取。」</strong></div></div>
-          <div class="step"><div class="step-dot">4</div><div class="step-text">立刻跳过做下一道题。等情绪平复，记忆回路重新连接，回头再看——<strong>答案往往就自然跳出来了。</strong></div></div>
+          <div class="step"><div class="sn">1</div><div class="st"><strong>立刻停！</strong>调整一下呼吸，平静下来。</div></div>
+          <div class="step"><div class="sn">2</div><div class="st">拿过草稿纸，在角落画一个方框，写上<strong>「暂存区」</strong>。</div></div>
+          <div class="step"><div class="sn">3</div><div class="st">把卡壳的题号写进去，告诉自己：<strong>「我先存在这，一会再来取。」</strong></div></div>
+          <div class="step"><div class="sn">4</div><div class="st">立刻跳过做下一题。情绪平复后回头看——<strong>答案往往就自然跳出来了。</strong></div></div>
         </div>
-        <div class="tip-box">💡 放松是解锁记忆的唯一方式。存题是为了再取，不是放弃。</div>
+        <div class="tip">💡 放松是解锁记忆的唯一方式。存题是为了再取，不是放弃。</div>
       </div></div>
     </div>
 
   </div>
 </div>
 
-<!-- ════ 考后复原 ════ -->
-<div class="section after" id="after">
-  <div class="section-head">
-    <div class="section-head-icon">🌟</div>
-    <div class="section-head-text">
-      <strong>考后复原</strong>
-      <span>快速清空，全力备战下一场</span>
-    </div>
-  </div>
-  <div class="content">
+<!-- ══════════════ 考后复原 ══════════════ -->
+<div class="sec after" id="after">
+  <div class="sec-eye"><div class="sec-dot"></div><span class="sec-eye-text">考后复原 · After Exam</span></div>
+  <div class="cards">
 
-    <!-- 07 -->
-    <div class="card" onclick="toggleCard(this)">
-      <div class="card-header">
-        <div class="card-num">🚫</div>
-        <div class="card-info">
+    <div class="card" data-n="07" onclick="toggle(this)">
+      <div class="card-hd">
+        <div class="card-ico">🚫</div>
+        <div class="card-body-txt">
           <div class="card-tag">方法 07</div>
-          <div class="card-title">绝对禁止对答案</div>
-          <div class="card-brief">对完答案，下一科专注力直接减半</div>
+          <div class="card-name">绝对禁止对答案</div>
+          <div class="card-sub">对完答案，下一科专注力直接减半</div>
         </div>
-        <div class="chevron">›</div>
+        <div class="chev">›</div>
       </div>
-      <div class="card-body"><div class="card-body-inner">
-        <div class="warn-bar" style="background:rgba(255,55,95,.08);">
-          <span class="warn-icon">🚨</span>
-          <div class="warn-text" style="color:#8b0020;"><strong>这是绝对禁忌。</strong>考完一科，严禁跟任何人对答案！</div>
+      <div class="card-panel"><div class="card-panel-in">
+        <div class="warn warn-rose">
+          <span class="wi">🚨</span>
+          <div class="wt"><strong>绝对禁忌。</strong>考完一科，严禁跟任何人对答案！</div>
         </div>
-        <div class="steps-label">为什么</div>
+        <div class="slabel">为什么</div>
         <div class="steps">
-          <div class="step"><div class="step-dot">!</div><div class="step-text">心理学讲「未完结事件」是最耗费精力的事。一对答案发现错了，那种懊恼会像<strong>钩子一样死死拉扯你的大脑</strong>，让你无法专注下一科。</div></div>
+          <div class="step"><div class="sn">!</div><div class="st">「未完结事件」是最耗费精力的事。一对答案发现错了，那种懊恼会像<strong>钩子一样拉扯大脑</strong>，让你无法专注下一科，专注力直接减半。</div></div>
         </div>
-        <div class="steps-label" style="margin-top:14px;">正确做法</div>
+        <div class="slabel" style="margin-top:14px">正确做法</div>
         <div class="steps">
-          <div class="step"><div class="step-dot">1</div><div class="step-text">交卷的瞬间，立刻把试卷收起来，在心里告诉自己：<strong>「这门已经结束了。」</strong></div></div>
-          <div class="step"><div class="step-dot">2</div><div class="step-text"><strong>不讨论、不想象</strong>，全心全意准备下一科，即刻出发。</div></div>
+          <div class="step"><div class="sn">1</div><div class="st">交卷瞬间，立刻把试卷收起来，在心里告诉自己：<strong>「这门已经结束了。」</strong></div></div>
+          <div class="step"><div class="sn">2</div><div class="st"><strong>不讨论、不想象</strong>，全心全意准备下一科，即刻出发。</div></div>
         </div>
-        <div class="quote-box">
-          <div class="quote-text">「过去的过不去，<br>未来的来不了，<br>现在即是全部。」</div>
-        </div>
+        <div class="quote"><div class="quote-t">「过去的过不去，<br>未来的来不了，<br>现在即是全部。」</div></div>
       </div></div>
     </div>
 
-    <!-- 08 -->
-    <div class="card" onclick="toggleCard(this)">
-      <div class="card-header">
-        <div class="card-num">🤍</div>
-        <div class="card-info">
+    <div class="card" data-n="08" onclick="toggle(this)">
+      <div class="card-hd">
+        <div class="card-ico">🤍</div>
+        <div class="card-body-txt">
           <div class="card-tag">方法 08</div>
-          <div class="card-title">零极限四句话</div>
-          <div class="card-brief">控制不住回想失误？完成这个仪式来清空</div>
+          <div class="card-name">零极限四句话</div>
+          <div class="card-sub">脑子控制不住回放失误？用这个仪式清空</div>
         </div>
-        <div class="chevron">›</div>
+        <div class="chev">›</div>
       </div>
-      <div class="card-body"><div class="card-body-inner">
-        <div class="scene-tag">🎯 场景：脑子里反复回放失误的题</div>
-        <div class="steps-label">实操步骤</div>
+      <div class="card-panel"><div class="card-panel-in">
+        <div class="scene">🎯 场景：反复回放失误题目</div>
         <div class="steps">
-          <div class="step"><div class="step-dot">1</div><div class="step-text">在心里把刚考完的科目当成一个「人」，深情地说四句话：</div></div>
+          <div class="step"><div class="sn">1</div><div class="st">在心里把刚考完的科目当成一个「人」，对它深情地说四句话：</div></div>
         </div>
-        <div class="four-box">
-          <div class="sentence-row"><span class="s-icon">🌸</span><div><div class="s-main">对不起</div><div class="s-sub">对不起，刚才有道题我没答完美</div></div></div>
-          <div class="sentence-row"><span class="s-icon">🌸</span><div><div class="s-main">请原谅</div><div class="s-sub">请原谅我刚才的一点小紧张</div></div></div>
-          <div class="sentence-row"><span class="s-icon">🌸</span><div><div class="s-main">谢谢你</div><div class="s-sub">谢谢你这三年陪我熬过的每一个早读</div></div></div>
-          <div class="sentence-row"><span class="s-icon">🌸</span><div><div class="s-main">我爱你</div></div></div>
+        <div class="four">
+          <div class="frow"><span class="fi">🌸</span><div><div class="fm">对不起</div><div class="fs">对不起，刚才有道题我没答完美</div></div></div>
+          <div class="frow"><span class="fi">🌸</span><div><div class="fm">请原谅</div><div class="fs">请原谅我刚才的一点小紧张</div></div></div>
+          <div class="frow"><span class="fi">🌸</span><div><div class="fm">谢谢你</div><div class="fs">谢谢你这三年陪我熬过的每一个早读</div></div></div>
+          <div class="frow"><span class="fi">🌸</span><div><div class="fm">我爱你</div></div></div>
         </div>
         <div class="steps">
-          <div class="step"><div class="step-dot">2</div><div class="step-text">说完这四句话，在脑海里和它<strong>深深拥抱</strong>，请它祝福你的下一场考试。</div></div>
+          <div class="step"><div class="sn">2</div><div class="st">说完四句话，在脑海里和它<strong>深深拥抱</strong>，请它祝福你的下一场考试。</div></div>
         </div>
-        <div class="tip-box">💡 完成这个仪式，心里那个纠结的疙瘩会瞬间解开，负面情绪被彻底清空。</div>
+        <div class="tip">💡 完成这个仪式，心里的纠结疙瘩会瞬间解开，负面情绪被彻底清空。</div>
       </div></div>
     </div>
 
-    <!-- 09 -->
-    <div class="card" onclick="toggleCard(this)">
-      <div class="card-header">
-        <div class="card-num">👨‍👩‍👧</div>
-        <div class="card-info">
+    <div class="card" data-n="09" onclick="toggle(this)">
+      <div class="card-hd">
+        <div class="card-ico">👨‍👩‍👧</div>
+        <div class="card-body-txt">
           <div class="card-tag">方法 09</div>
-          <div class="card-title">万能防守话术</div>
-          <div class="card-brief">应对家长和亲戚的「致命追问」</div>
+          <div class="card-name">万能防守话术</div>
+          <div class="card-sub">应对家长和亲戚的「致命追问」</div>
         </div>
-        <div class="chevron">›</div>
+        <div class="chev">›</div>
       </div>
-      <div class="card-body"><div class="card-body-inner">
-        <div class="scene-tag">🎯 场景：家长、亲戚追问考试情况</div>
-        <div class="sub-label">👨‍👩‍👧 给家长</div>
+      <div class="card-panel"><div class="card-panel-in">
+        <div class="scene">🎯 场景：家长、亲戚追问考试情况</div>
+        <div class="sublabel">👨‍👩‍👧 给家长</div>
         <div class="steps">
-          <div class="step"><div class="step-dot">✓</div><div class="step-text">孩子走出考场，<strong>什么都别问！</strong>只说一句：<br><br><strong>「辛苦了，走，带你去吃好吃的！」</strong></div></div>
+          <div class="step"><div class="sn">✓</div><div class="st">孩子走出考场，<strong>什么都别问！</strong>只说：<br><br><strong>「辛苦了，走，带你吃好吃的！」</strong></div></div>
         </div>
-        <div class="sub-label">🎓 给考生</div>
+        <div class="sublabel" style="margin-top:14px">🎓 给考生</div>
         <div class="steps">
-          <div class="step"><div class="step-dot">✓</div><div class="step-text">遇到亲戚追问，就说这句万能话：</div></div>
+          <div class="step"><div class="sn">✓</div><div class="st">遇到亲戚追问，就说这句万能话：</div></div>
         </div>
-        <div class="quote-box" style="margin-top:10px;">
-          <div class="quote-text">「我觉得发挥出了<br>我的正常水平。」</div>
-        </div>
-        <div class="tip-box">💡 这句话没有拉高别人的期待，也不暴露自己的底牌，稳稳守住底线，终结追问——这就是「界限」的力量。</div>
+        <div class="quote" style="margin-top:10px"><div class="quote-t">「我觉得发挥出了<br>我的正常水平。」</div></div>
+        <div class="tip">💡 这句话没拉高别人期待，也不暴露底牌，稳稳守住底线，终结追问——这就是「界限」的力量。</div>
       </div></div>
     </div>
 
@@ -737,233 +635,178 @@ body {
 
 </main>
 
-<footer class="footer">
-  高考心理急救包 · 9 个科学方法<br>收藏本页，随时查看
-</footer>
+<footer class="footer">高考心理急救包 · 9 个科学方法<br>收藏本页，考前考中考后随时查看</footer>
+<button class="topbtn" id="topBtn" onclick="scrollTo({top:0,behavior:'smooth'})">↑</button>
 
-<button class="top-btn" id="topBtn" onclick="scrollToTop()">↑</button>
-
-<!-- 底部 TAB BAR -->
-<div class="tab-bar">
-  <button class="tab-item active" data-tab="before">
-    <div class="tab-icon-wrap">📚</div>
+<!-- TAB BAR -->
+<div class="tabbar">
+  <button class="tab active" data-t="before">
+    <span class="tab-emoji">📚</span>
     <span class="tab-label">考前准备</span>
   </button>
-  <button class="tab-item" data-tab="during">
-    <div class="tab-icon-wrap">⚡</div>
+  <button class="tab" data-t="during">
+    <span class="tab-emoji">⚡</span>
     <span class="tab-label">考场急救</span>
   </button>
-  <button class="tab-item" data-tab="after">
-    <div class="tab-icon-wrap">🌟</div>
+  <button class="tab" data-t="after">
+    <span class="tab-emoji">🌟</span>
     <span class="tab-label">考后复原</span>
   </button>
 </div>
 
 <script>
-// ══════════════════════════════════════════════
-// 音频系统 — 中音区环境垫音，如春风，无旋律
-// ══════════════════════════════════════════════
-var AM = {
-    ctx: null, master: null, filter: null,
-    isOn: false, booted: false,
-    breatheTimer: null, arpTimer: null,
+/* ─── 音频：中音区环境垫音，纯五度+八度，无旋律 ─── */
+var AM={
+  ctx:null,master:null,lpf:null,
+  isOn:false,booted:false,bTimer:null,
 
-    boot: function() {
-        if (this.booted) return;
-        try {
-            var AC = window.AudioContext || window.webkitAudioContext;
-            if (!AC) return;
-            this.ctx    = new AC();
-            this.master = this.ctx.createGain();
-            this.master.gain.value = 0;
-            this.master.connect(this.ctx.destination);
-            this.ctx.resume();
-            // 静音 buffer 解锁 iOS 音频硬件
-            var buf = this.ctx.createBuffer(1,1,22050);
-            var src = this.ctx.createBufferSource();
-            src.buffer = buf; src.connect(this.ctx.destination); src.start(0);
-            this.booted = true;
-        } catch(e) {}
-    },
+  boot:function(){
+    if(this.booted)return;
+    try{
+      var AC=window.AudioContext||window.webkitAudioContext;
+      if(!AC)return;
+      this.ctx=new AC();
+      this.master=this.ctx.createGain();
+      this.master.gain.value=0;
+      this.master.connect(this.ctx.destination);
+      this.ctx.resume();
+      var b=this.ctx.createBuffer(1,1,22050),s=this.ctx.createBufferSource();
+      s.buffer=b;s.connect(this.ctx.destination);s.start(0);
+      this.booted=true;
+    }catch(e){}
+  },
 
-    on: function() {
-        if (!this.booted) return;
-        this.ctx.resume();
-        this.isOn = true;
+  on:function(){
+    if(!this.booted)return;
+    this.ctx.resume();
+    this.isOn=true;
 
-        var ctx = this.ctx;
+    var ctx=this.ctx;
+    /* 低通滤波器：550Hz以上全部截掉，只保留中低音 */
+    var lpf=ctx.createBiquadFilter();
+    lpf.type='lowpass';lpf.frequency.value=550;lpf.Q.value=0.6;
+    lpf.connect(this.master);this.lpf=lpf;
 
-        // 低通滤波器：裁掉 800Hz 以上高频，保留温暖中低音
-        var lpf = ctx.createBiquadFilter();
-        lpf.type = 'lowpass';
-        lpf.frequency.value = 800;
-        lpf.Q.value = 0.7;
-        lpf.connect(this.master);
-        this.filter = lpf;
+    /* 纯五度和弦：C3-G3-C4（开放、中性、不压迫）
+       每个音：4 个振荡器，±4/±1 cent 微调，产生自然合唱厚度 */
+    var notes=[
+      {f:130.81,v:0.018},  /* C3 —— 若隐若现的低频基础 */
+      {f:196.00,v:0.030},  /* G3 —— 纯五度，开阔 */
+      {f:261.63,v:0.034},  /* C4 —— 中音重心 */
+      {f:392.00,v:0.020},  /* G4 —— 轻盈的上方色彩 */
+    ];
+    notes.forEach(function(n){
+      [-4,-1,1,4].forEach(function(c){
+        var o=ctx.createOscillator(),g=ctx.createGain();
+        o.type='sine';
+        o.frequency.value=n.f*Math.pow(2,c/1200);
+        g.gain.value=n.v/4;
+        o.connect(g);g.connect(lpf);o.start();
+      });
+    });
 
-        // 中音区和弦垫音：C大调，以C3-E4为主
-        // 每个音用 2 个微调振荡器制造温暖合唱感
-        var pads = [
-            {f: 130.81, v: 0.020},  // C3 — 若隐若现的低频基础
-            {f: 164.81, v: 0.032},  // E3 — 大三度，明亮温暖
-            {f: 196.00, v: 0.028},  // G3 — 纯五度，开阔
-            {f: 261.63, v: 0.034},  // C4 — 中音重心
-            {f: 329.63, v: 0.022},  // E4 — 轻柔的上方色彩
-        ];
+    /* 呼吸感：12 秒周期，gain 在 0.48～0.70 之间缓慢起伏 */
+    this.master.gain.value=0.55;
+    var self=this,t0=Date.now();
+    this.bTimer=setInterval(function(){
+      if(!self.isOn)return;
+      var t=(Date.now()-t0)/1000;
+      self.master.gain.value=0.48+0.22*(0.5+0.5*Math.sin(t*0.524));
+    },120);
+  },
 
-        pads.forEach(function(p) {
-            [-4, 0, 4].forEach(function(cents) {  // 3个微调产生合唱感
-                var osc  = ctx.createOscillator();
-                var gain = ctx.createGain();
-                osc.type = 'triangle';   // 三角波：温暖、饱满、不刺耳
-                osc.frequency.value = p.f * Math.pow(2, cents / 1200);
-                gain.gain.value = p.v / 3;
-                osc.connect(gain);
-                gain.connect(lpf);
-                osc.start();
-            });
-        });
+  off:function(){
+    this.isOn=false;
+    clearInterval(this.bTimer);
+    if(!this.booted)return;
+    this.master.gain.value=0;
+  },
 
-        // 呼吸感：master gain 以 8 秒为周期缓慢起伏
-        this.master.gain.value = 0.6;
-        var self = this, t0 = Date.now();
-        this.breatheTimer = setInterval(function() {
-            if (!self.isOn) return;
-            var t = (Date.now() - t0) / 1000;
-            // 在 0.52 ~ 0.72 之间如呼吸般波动
-            self.master.gain.value = 0.52 + 0.20 * (0.5 + 0.5 * Math.sin(t * 0.785));
-        }, 100);
-    },
-
-    off: function() {
-        this.isOn = false;
-        clearInterval(this.breatheTimer);
-        if (!this.booted) return;
-        this.master.gain.value = 0;
-    },
-
-    // UI 音效：轻盈、简短
-    _beep: function(f, f2, dur, vol) {
-        if (!this.booted) return;
-        this.ctx.resume();
-        var ctx = this.ctx, now = ctx.currentTime;
-        var osc = ctx.createOscillator(), g = ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(f, now);
-        if (f2 && f2 !== f) osc.frequency.exponentialRampToValueAtTime(f2, now + dur);
-        g.gain.setValueAtTime(vol || 0.22, now);
-        g.gain.exponentialRampToValueAtTime(0.001, now + dur);
-        osc.connect(g); g.connect(ctx.destination);
-        osc.start(now); osc.stop(now + dur + 0.02);
-    },
-    playTab:   function() { this._beep(680, 520, 0.09, 0.20); },
-    playOpen:  function() {
-        this._beep(480, 480, 0.20, 0.18);
-        var s = this;
-        setTimeout(function(){ s._beep(600, 600, 0.22, 0.14); }, 100);
-    },
-    playClose: function() { this._beep(430, 330, 0.14, 0.16); }
+  /* UI 音效：轻盈短音 */
+  beep:function(f,f2,d,v){
+    if(!this.booted)return;
+    this.ctx.resume();
+    var ctx=this.ctx,now=ctx.currentTime;
+    var o=ctx.createOscillator(),g=ctx.createGain();
+    o.type='sine';
+    o.frequency.setValueAtTime(f,now);
+    if(f2&&f2!==f)o.frequency.exponentialRampToValueAtTime(f2,now+d);
+    g.gain.setValueAtTime(v||0.2,now);
+    g.gain.exponentialRampToValueAtTime(0.001,now+d);
+    o.connect(g);g.connect(ctx.destination);
+    o.start(now);o.stop(now+d+0.02);
+  },
+  tab:  function(){this.beep(650,500,0.09,0.18)},
+  open: function(){this.beep(460,460,0.2,0.16);var s=this;setTimeout(function(){s.beep(580,580,0.22,0.12)},100)},
+  close:function(){this.beep(420,320,0.13,0.14)}
 };
 
-// ══════════════════════════════════════════════
-// 音乐按钮（touchstart + click 双触发，iOS 兼容）
-// ══════════════════════════════════════════════
-(function() {
-    var fired = false;
-    function onAudio(e) {
-        e.preventDefault();
-        if (fired) { fired = false; return; }
-        fired = true;
-        setTimeout(function(){ fired = false; }, 500);
-        AM.boot();
-        var btn  = document.getElementById('audioBtn');
-        var note = btn.querySelector('.note');
-        if (AM.isOn) {
-            AM.off();
-            btn.classList.remove('playing');
-            note.textContent = '🎵';
-        } else {
-            AM.on();
-            btn.classList.add('playing');
-            note.textContent = '🔊';
-        }
-    }
-    var btn = document.getElementById('audioBtn');
-    if (btn) {
-        btn.addEventListener('touchstart', onAudio, { passive: false });
-        btn.addEventListener('click',      onAudio);
-    }
+/* 音乐按钮 */
+(function(){
+  var fired=false;
+  function h(e){
+    e.preventDefault();
+    if(fired){fired=false;return}
+    fired=true;setTimeout(function(){fired=false},500);
+    AM.boot();
+    var btn=document.getElementById('mBtn'),ico=btn.querySelector('.ico');
+    if(AM.isOn){AM.off();btn.classList.remove('on');ico.textContent='🎵'}
+    else{AM.on();btn.classList.add('on');ico.textContent='🎶'}
+  }
+  var b=document.getElementById('mBtn');
+  b.addEventListener('touchstart',h,{passive:false});
+  b.addEventListener('click',h);
 })();
 
-// ══════════════════════════════════════════════
-// TAB 切换（底部导航）
-// ══════════════════════════════════════════════
-document.querySelectorAll('.tab-item').forEach(function(item) {
-    item.addEventListener('click', function() {
-        var tab = this.getAttribute('data-tab');
-        AM.boot(); AM.playTab();
-        document.querySelectorAll('.tab-item').forEach(function(t){ t.classList.remove('active'); });
-        document.querySelectorAll('.section').forEach(function(s){ s.classList.remove('active'); });
-        item.classList.add('active');
-        document.getElementById(tab).classList.add('active');
-        setTimeout(initCards, 40);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+/* Tab 切换 */
+document.querySelectorAll('.tab').forEach(function(t){
+  t.addEventListener('click',function(){
+    AM.boot();AM.tab();
+    document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active')});
+    document.querySelectorAll('.sec').forEach(function(x){x.classList.remove('on')});
+    t.classList.add('active');
+    document.getElementById(t.getAttribute('data-t')).classList.add('on');
+    setTimeout(initCards,40);
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
 });
 
-// ══════════════════════════════════════════════
-// 卡片展开 / 收起
-// ══════════════════════════════════════════════
-function toggleCard(card) {
-    AM.boot();
-    var wasOpen = card.classList.contains('open');
-    card.closest('.section').querySelectorAll('.card.open').forEach(function(c){
-        if (c !== card) c.classList.remove('open');
-    });
-    card.classList.toggle('open', !wasOpen);
-    if (!wasOpen) { AM.playOpen(); } else { AM.playClose(); }
+/* 卡片展开 */
+function toggle(card){
+  AM.boot();
+  var was=card.classList.contains('open');
+  card.closest('.sec').querySelectorAll('.card.open').forEach(function(c){c.classList.remove('open')});
+  card.classList.toggle('open',!was);
+  if(!was){AM.open()}else{AM.close()}
 }
 
-// ══════════════════════════════════════════════
-// 卡片入场动画
-// ══════════════════════════════════════════════
-function initCards() {
-    var sec = document.querySelector('.section.active');
-    if (!sec) return;
-    var cards = sec.querySelectorAll('.card');
-    if ('IntersectionObserver' in window) {
-        var obs = new IntersectionObserver(function(entries) {
-            entries.forEach(function(e, i) {
-                if (e.isIntersecting) {
-                    setTimeout(function(){ e.target.classList.add('visible'); }, i * 70);
-                    obs.unobserve(e.target);
-                }
-            });
-        }, { threshold: 0.06 });
-        cards.forEach(function(c){
-            if (!c.classList.contains('visible')) obs.observe(c);
-        });
-    } else {
-        cards.forEach(function(c, i){
-            setTimeout(function(){ c.classList.add('visible'); }, i * 80);
-        });
-    }
+/* 入场动画 */
+function initCards(){
+  var sec=document.querySelector('.sec.on');if(!sec)return;
+  var cards=sec.querySelectorAll('.card');
+  if('IntersectionObserver' in window){
+    var obs=new IntersectionObserver(function(es){
+      es.forEach(function(e,i){
+        if(e.isIntersecting){
+          setTimeout(function(){e.target.classList.add('vis')},i*70);
+          obs.unobserve(e.target);
+        }
+      });
+    },{threshold:0.05});
+    cards.forEach(function(c){if(!c.classList.contains('vis'))obs.observe(c)});
+  }else{
+    cards.forEach(function(c,i){setTimeout(function(){c.classList.add('vis')},i*80)});
+  }
 }
 
-// ══════════════════════════════════════════════
-// 回到顶部
-// ══════════════════════════════════════════════
-window.addEventListener('scroll', function(){
-    document.getElementById('topBtn').classList.toggle('show', window.scrollY > 200);
+/* 顶部按钮 */
+window.addEventListener('scroll',function(){
+  document.getElementById('topBtn').classList.toggle('show',window.scrollY>200);
 });
-function scrollToTop(){ window.scrollTo({ top:0, behavior:'smooth' }); }
 
-// 初始化
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function(){ setTimeout(initCards, 80); });
-} else {
-    setTimeout(initCards, 80);
-}
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',function(){setTimeout(initCards,80)});
+}else{setTimeout(initCards,80)}
 </script>
 </body>
 </html>
