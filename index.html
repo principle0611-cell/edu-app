@@ -635,7 +635,7 @@ body{
 
 </main>
 
-<footer class="footer">高考心理急救包 · 9 个科学方法<br>收藏本页，考前考中考后随时查看</footer>
+<footer class="footer">高考心理急救包 · 9 个科学方法<br>收藏本页，考前考中考后随时查看<br><span style="opacity:.45;font-size:11px;letter-spacing:.5px">一嘉心苑出品</span></footer>
 <button class="topbtn" id="topBtn" onclick="scrollTo({top:0,behavior:'smooth'})">↑</button>
 
 <!-- TAB BAR -->
@@ -654,91 +654,58 @@ body{
   </button>
 </div>
 
+<audio id="bgAudio" loop preload="none" src="music.mp3"></audio>
+
 <script>
-/* ─── 音频：中音区环境垫音，纯五度+八度，无旋律 ─── */
+/* ─── 背景音乐：真实 MP3（Satie Gymnopédie No.1）─── */
 var AM={
-  ctx:null,master:null,lpf:null,
-  isOn:false,booted:false,bTimer:null,
+  audio: null,
+  isOn: false,
 
-  boot:function(){
-    if(this.booted)return;
-    try{
-      var AC=window.AudioContext||window.webkitAudioContext;
-      if(!AC)return;
-      this.ctx=new AC();
-      this.master=this.ctx.createGain();
-      this.master.gain.value=0;
-      this.master.connect(this.ctx.destination);
-      this.ctx.resume();
-      var b=this.ctx.createBuffer(1,1,22050),s=this.ctx.createBufferSource();
-      s.buffer=b;s.connect(this.ctx.destination);s.start(0);
-      this.booted=true;
-    }catch(e){}
+  init: function(){
+    if(this.audio) return;
+    this.audio = document.getElementById('bgAudio');
+    this.audio.volume = 0.72;
   },
 
-  on:function(){
-    if(!this.booted)return;
-    this.ctx.resume();
-    this.isOn=true;
-
-    var ctx=this.ctx;
-    /* 低通滤波器：550Hz以上全部截掉，只保留中低音 */
-    var lpf=ctx.createBiquadFilter();
-    lpf.type='lowpass';lpf.frequency.value=550;lpf.Q.value=0.6;
-    lpf.connect(this.master);this.lpf=lpf;
-
-    /* 纯五度和弦：C3-G3-C4（开放、中性、不压迫）
-       每个音：4 个振荡器，±4/±1 cent 微调，产生自然合唱厚度 */
-    var notes=[
-      {f:130.81,v:0.018},  /* C3 —— 若隐若现的低频基础 */
-      {f:196.00,v:0.030},  /* G3 —— 纯五度，开阔 */
-      {f:261.63,v:0.034},  /* C4 —— 中音重心 */
-      {f:392.00,v:0.020},  /* G4 —— 轻盈的上方色彩 */
-    ];
-    notes.forEach(function(n){
-      [-4,-1,1,4].forEach(function(c){
-        var o=ctx.createOscillator(),g=ctx.createGain();
-        o.type='sine';
-        o.frequency.value=n.f*Math.pow(2,c/1200);
-        g.gain.value=n.v/4;
-        o.connect(g);g.connect(lpf);o.start();
-      });
-    });
-
-    /* 呼吸感：12 秒周期，gain 在 0.48～0.70 之间缓慢起伏 */
-    this.master.gain.value=0.55;
-    var self=this,t0=Date.now();
-    this.bTimer=setInterval(function(){
-      if(!self.isOn)return;
-      var t=(Date.now()-t0)/1000;
-      self.master.gain.value=0.48+0.22*(0.5+0.5*Math.sin(t*0.524));
-    },120);
+  on: function(){
+    this.init();
+    var self = this;
+    var p = this.audio.play();
+    if(p && p.catch) p.catch(function(){});
+    this.isOn = true;
   },
 
-  off:function(){
-    this.isOn=false;
-    clearInterval(this.bTimer);
-    if(!this.booted)return;
-    this.master.gain.value=0;
+  off: function(){
+    this.init();
+    this.audio.pause();
+    this.isOn = false;
   },
 
-  /* UI 音效：轻盈短音 */
-  beep:function(f,f2,d,v){
-    if(!this.booted)return;
-    this.ctx.resume();
-    var ctx=this.ctx,now=ctx.currentTime;
-    var o=ctx.createOscillator(),g=ctx.createGain();
+  /* UI 音效：用 Web Audio 轻盈短音 */
+  _ctx: null,
+  _getCtx: function(){
+    if(!this._ctx){
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if(AC){ this._ctx = new AC(); this._ctx.resume(); }
+    }
+    return this._ctx;
+  },
+  beep: function(f,f2,d,v){
+    var ctx = this._getCtx(); if(!ctx) return;
+    ctx.resume();
+    var now=ctx.currentTime,o=ctx.createOscillator(),g=ctx.createGain();
     o.type='sine';
     o.frequency.setValueAtTime(f,now);
-    if(f2&&f2!==f)o.frequency.exponentialRampToValueAtTime(f2,now+d);
-    g.gain.setValueAtTime(v||0.2,now);
+    if(f2&&f2!==f) o.frequency.exponentialRampToValueAtTime(f2,now+d);
+    g.gain.setValueAtTime(v||0.18,now);
     g.gain.exponentialRampToValueAtTime(0.001,now+d);
-    o.connect(g);g.connect(ctx.destination);
-    o.start(now);o.stop(now+d+0.02);
+    o.connect(g); g.connect(ctx.destination);
+    o.start(now); o.stop(now+d+0.02);
   },
-  tab:  function(){this.beep(650,500,0.09,0.18)},
-  open: function(){this.beep(460,460,0.2,0.16);var s=this;setTimeout(function(){s.beep(580,580,0.22,0.12)},100)},
-  close:function(){this.beep(420,320,0.13,0.14)}
+  tab:  function(){ this.beep(650,500,0.09,0.16); },
+  open: function(){ this.beep(460,460,0.18,0.14); var s=this; setTimeout(function(){ s.beep(580,580,0.20,0.11); },100); },
+  close:function(){ this.beep(420,320,0.12,0.13); }
 };
 
 /* 音乐按钮 */
@@ -746,12 +713,14 @@ var AM={
   var fired=false;
   function h(e){
     e.preventDefault();
-    if(fired){fired=false;return}
-    fired=true;setTimeout(function(){fired=false},500);
-    AM.boot();
-    var btn=document.getElementById('mBtn'),ico=btn.querySelector('.ico');
-    if(AM.isOn){AM.off();btn.classList.remove('on');ico.textContent='🎵'}
-    else{AM.on();btn.classList.add('on');ico.textContent='🎶'}
+    if(fired){fired=false;return;}
+    fired=true; setTimeout(function(){fired=false;},500);
+    var btn=document.getElementById('mBtn'), ico=btn.querySelector('.ico');
+    if(AM.isOn){
+      AM.off(); btn.classList.remove('on'); ico.textContent='🎵';
+    } else {
+      AM.on(); btn.classList.add('on'); ico.textContent='🎶';
+    }
   }
   var b=document.getElementById('mBtn');
   b.addEventListener('touchstart',h,{passive:false});
