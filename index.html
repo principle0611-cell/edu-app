@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <title>高考心理急救包 · 9个科学减压法</title>
+    <meta name="description" content="9个经过验证的心理减压方法，考前·考中·考后全程护航，帮你稳定心态、发挥真实水平">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --blue: #3b82f6;
+            --blue-light: #eff6ff;
+            --blue-deep: #1d4ed8;
+            --purple: #7c3aed;
+            --purple-light: #f5f3ff;
+            --purple-deep: #5b21b6;
+            --pink: #db2777;
+            --pink-light: #fdf2f8;
+            --pink-deep: #9d174d;
+            --text: #1e293b;
+            --muted: #64748b;
+            --border: #e2e8f0;
+            --bg: #f8faff;
+            --card: #ffffff;
+            --radius: 18px;
+            --shadow: 0 4px 24px rgba(99, 102, 241, 0.08);
+            --shadow-hover: 0 8px 32px rgba(99, 102, 241, 0.15);
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            max-width: 480px;
+            margin: 0 auto;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ==================== HERO ==================== */
+        .hero {
+            position: relative;
+            padding: 52px 24px 60px;
+            text-align: center;
+            background: linear-gradient(145deg, #4f46e5 0%, #7c3aed 40%, #db2777 80%, #f43f5e 100%);
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(255,255,255,0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255,255,255,0.08) 0%, transparent 50%);
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: var(--bg);
+            border-radius: 40px 40px 0 0;
+        }
+
+        .hero-inner {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.18);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.25);
+            color: white;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            letter-spacing: 0.3px;
+        }
+
+        .hero-icon {
+            font-size: 64px;
+            display: block;
+            margin-bottom: 14px;
+            animation: float 3.5s ease-in-out infinite;
+            filter: drop-shadow(0 8px 24px rgba(0,0,0,0.2));
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(-2deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+        }
+
+        .hero-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 30px;
+            font-weight: 900;
+            color: white;
+            line-height: 1.2;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 12px rgba(0,0,0,0.2);
+            letter-spacing: 1px;
+        }
+
+        .hero-sub {
+            font-size: 14px;
+            color: rgba(255,255,255,0.85);
+            line-height: 1.8;
+            margin-bottom: 28px;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .stat-pill {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            line-height: 1.4;
+            text-align: center;
+        }
+
+        .stat-pill strong {
+            display: block;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        /* ==================== TABS ==================== */
+        .tabs-wrap {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: white;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+        }
+
+        .tabs {
+            display: flex;
+            padding: 0 4px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 14px 6px 12px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--muted);
+            border: none;
+            background: none;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.25s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            font-family: inherit;
+        }
+
+        .tab-icon { font-size: 18px; }
+        .tab-label { font-size: 12px; }
+
+        .tab[data-tab="before"].active { color: var(--blue); border-bottom-color: var(--blue); }
+        .tab[data-tab="during"].active { color: var(--purple); border-bottom-color: var(--purple); }
+        .tab[data-tab="after"].active { color: var(--pink); border-bottom-color: var(--pink); }
+
+        /* ==================== CONTENT ==================== */
+        .content {
+            padding: 20px 16px 32px;
+        }
+
+        .section { display: none; }
+
+        .section.active {
+            display: block;
+            animation: sectionIn 0.35s ease;
+        }
+
+        @keyframes sectionIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-header {
+            margin-bottom: 20px;
+            padding: 0 4px;
+        }
+
+        .section-eyebrow {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            opacity: 0.5;
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            letter-spacing: -0.3px;
+        }
+
+        .section-desc {
+            font-size: 13px;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        /* ==================== CARDS ==================== */
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            margin-bottom: 14px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.04);
+            opacity: 0;
+            transform: translateY(16px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        .card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card-header {
+            padding: 18px 18px 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            -webkit-user-select: none;
+            user-select: none;
+            transition: background 0.2s;
+        }
+
+        .card-header:active { background: #fafbff; }
+
+        .card-num-badge {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .card-meta { flex: 1; min-width: 0; }
+
+        .card-tag {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+            opacity: 0.55;
+        }
+
+        .card-title {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            line-height: 1.3;
+            letter-spacing: -0.2px;
+        }
+
+        .card-brief {
+            font-size: 12.5px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .card-arrow {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
+            font-size: 12px;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s;
+            background: #f1f5f9;
+            color: var(--muted);
+        }
+
+        .card.open .card-arrow { transform: rotate(180deg); }
+
+        /* Expandable body */
+        .card-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card.open .card-body { max-height: 1600px; }
+
+        .card-body-inner {
+            padding: 0 18px 20px;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 16px;
+        }
+
+        /* Scene tag */
+        .scene-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 16px;
+        }
+
+        /* Steps */
+        .steps-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--muted);
+            margin-bottom: 12px;
+        }
+
+        .steps { display: flex; flex-direction: column; gap: 12px; }
+
+        .step {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .step-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .step-text {
+            font-size: 14px;
+            line-height: 1.75;
+            color: #374151;
+            flex: 1;
+        }
+
+        .step-text strong { color: var(--text); }
+
+        /* Tip box */
+        .tip-box {
+            margin-top: 16px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            font-size: 13px;
+            line-height: 1.7;
+            border-left: 3px solid;
+        }
+
+        /* Quote card */
+        .quote-card {
+            border-radius: 12px;
+            padding: 16px;
+            margin: 12px 0;
+            text-align: center;
+        }
+
+        .quote-text {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 17px;
+            font-weight: 700;
+            line-height: 1.7;
+        }
+
+        /* Four sentences */
+        .four-sentences {
+            border-radius: 12px;
+            padding: 16px;
+            margin: 12px 0;
+        }
+
+        .sentence-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 8px 0;
+        }
+
+        .sentence-row:not(:last-child) {
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .sentence-icon { font-size: 16px; flex-shrink: 0; padding-top: 1px; }
+
+        .sentence-main {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .sentence-sub {
+            font-size: 12px;
+            opacity: 0.65;
+            line-height: 1.4;
+        }
+
+        /* Warning card */
+        .warning-banner {
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 14px;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .warning-icon { font-size: 20px; flex-shrink: 0; }
+        .warning-text { font-size: 13px; line-height: 1.65; font-weight: 500; }
+
+        /* ==================== THEME: BEFORE (BLUE) ==================== */
+        .before .section-eyebrow { color: var(--blue); }
+        .before .section-title { color: var(--blue-deep); }
+        .before .card-num-badge { background: var(--blue-light); }
+        .before .card-tag { color: var(--blue); }
+        .before .card.open .card-arrow { background: var(--blue-light); color: var(--blue); }
+        .before .step-dot { background: var(--blue); }
+        .before .scene-tag { background: var(--blue-light); color: var(--blue-deep); }
+        .before .tip-box { background: var(--blue-light); color: var(--blue-deep); border-left-color: var(--blue); }
+
+        /* ==================== THEME: DURING (PURPLE) ==================== */
+        .during .section-eyebrow { color: var(--purple); }
+        .during .section-title { color: var(--purple-deep); }
+        .during .card-num-badge { background: var(--purple-light); }
+        .during .card-tag { color: var(--purple); }
+        .during .card.open .card-arrow { background: var(--purple-light); color: var(--purple); }
+        .during .step-dot { background: var(--purple); }
+        .during .scene-tag { background: var(--purple-light); color: var(--purple-deep); }
+        .during .tip-box { background: var(--purple-light); color: var(--purple-deep); border-left-color: var(--purple); }
+
+        /* ==================== THEME: AFTER (PINK) ==================== */
+        .after .section-eyebrow { color: var(--pink); }
+        .after .section-title { color: var(--pink-deep); }
+        .after .card-num-badge { background: var(--pink-light); }
+        .after .card-tag { color: var(--pink); }
+        .after .card.open .card-arrow { background: var(--pink-light); color: var(--pink); }
+        .after .step-dot { background: var(--pink); }
+        .after .scene-tag { background: var(--pink-light); color: var(--pink-deep); }
+        .after .tip-box { background: var(--pink-light); color: var(--pink-deep); border-left-color: var(--pink); }
+        .after .quote-card { background: var(--pink-light); }
+        .after .quote-text { color: var(--pink-deep); }
+        .after .four-sentences { background: var(--pink-light); }
+        .after .sentence-main { color: var(--pink-deep); }
+        .after .warning-banner { background: #fff3e0; }
+        .after .warning-text { color: #b45309; }
+
+        /* ==================== FOOTER ==================== */
+        .footer {
+            text-align: center;
+            padding: 28px 24px 56px;
+        }
+
+        .footer-line {
+            width: 32px;
+            height: 3px;
+            background: linear-gradient(90deg, #6366f1, #db2777);
+            border-radius: 2px;
+            margin: 0 auto 20px;
+        }
+
+        .footer-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+
+        .footer-sub {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.8;
+        }
+
+        .footer-share {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 16px;
+            background: linear-gradient(135deg, #6366f1, #db2777);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* ==================== SCROLL TO TOP ==================== */
+        .top-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: white;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s;
+            z-index: 200;
+            border: none;
+        }
+
+        .top-btn.show { opacity: 1; transform: translateY(0); }
+
+        /* ==================== MISC ==================== */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        .sub-section-title {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: var(--muted);
+            margin: 16px 0 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+    <div class="hero-inner">
+        <div class="hero-badge">✨ 心理科学 · 实测有效</div>
+        <span class="hero-icon">🧠</span>
+        <h1 class="hero-title">高考心理急救包</h1>
+        <p class="hero-sub">9个科学减压法，帮你稳住心态<br>考前 · 考中 · 考后，全程护航</p>
+        <div class="hero-stats">
+            <div class="stat-pill"><strong>3</strong>考前准备</div>
+            <div class="stat-pill"><strong>3</strong>考场急救</div>
+            <div class="stat-pill"><strong>3</strong>考后复原</div>
+        </div>
+    </div>
+</header>
+
+<!-- TABS -->
+<div class="tabs-wrap">
+    <div class="tabs">
+        <button class="tab active" data-tab="before" onclick="switchTab('before')">
+            <span class="tab-icon">📚</span>
+            <span class="tab-label">考前准备</span>
+        </button>
+        <button class="tab" data-tab="during" onclick="switchTab('during')">
+            <span class="tab-icon">⚡</span>
+            <span class="tab-label">考场急救</span>
+        </button>
+        <button class="tab" data-tab="after" onclick="switchTab('after')">
+            <span class="tab-icon">🌟</span>
+            <span class="tab-label">考后复原</span>
+        </button>
+    </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<main class="content">
+
+    <!-- ========== 考前准备 ========== -->
+    <div class="section before active" id="before">
+        <div class="section-header">
+            <div class="section-eyebrow">BEFORE EXAM</div>
+            <div class="section-title">📚 考前准备</div>
+            <div class="section-desc">用这3个方法，进考场前就建立强大的心理防线</div>
+        </div>
+
+        <!-- 方法1：收回投射法 -->
+        <div class="card" onclick="toggleCard(this)">
+            <div class="card-header">
+                <div class="card-num-badge">🌸</div>
+                <div class="card-meta">
+                    <div class="card-tag">DRY GOODS 01</div>
+                    <div class="card-title">收回投射法</div>
+                    <div class="card-brief">卸下父母的期待包袱，轻装上阵</div>
+                </div>
+                <div class="card-arrow">▾</div>
+            </div>
+            <div class="card-body">
+                <div class="card-body-inner">
+                    <div class="scene-tag">🎯 应对：父母与外界的压力</div>
+                    <div class="steps-label">实操步骤</div>
+                    <div class="steps">
+                        <div class="step">
+                            <div class="step-dot">1</div>
+                            <div class="step-text">找个安静的地方<strong>闭上眼睛</strong>，在脑海中想象那个给你压力最大的人，站在离你两三步远的地方。</div>
+                        </div>
+                        <div class="step">
+                            <div class="step-dot">2</div>
+                            <div class="step-text">想象他带给你的压力，<strong>变成一粒粒小雪花或光点</strong>，慢慢从你的身体里剥离出来，全部飞回到那个人的身上。</div>
+                        </div>
+                        <div class="step">
+                            <div class="step-dot">3</div>
+                            <div class="step-text">在心里默念这句话：<br><br><strong>「我把你们对我的期待交还给你们，但我把你们对我的爱深深放在心里。这样，我就能轻装上阵，轻松地做我自己。」</strong></div>
+                        </div>
+                        <div class="step">
+                            <div class="step-dot">4</div>
+                            <div class="step-text">想象在你们中间画一条线——这条线叫<strong>「界限」</strong>。不属于你的压力，全部挡在界限之外。</div>
+                        </div>
+                    </div>
+                    <div class="tip-box">💡 压垮孩子的从来不是分数，而是背负了父母太重的期待。做完这一步，你的内心会瞬间轻松一大半。</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 方法2：借未来画面法 -->
+        <div class="card" onclick="toggleCard(this)">
+            <div class="card-header">
+                <div class="card-num-badge">🔮</div>
+                <div class="card-meta">
+                    <div class="card-tag">DRY GOODS 02</div>
+                    <div class="card-title">借未来画面法</div>
+                    <div class="card-brief">从未来借力，化解"一考定终身"的恐惧</div>
+                </div>
+                <div class="card-arrow">▾</div>
+            </div>
+            <div class="card-body">
+                <div class="card-body-inner">
+                    <div class="scene-tag">🎯 应对：把高考当赌博的焦虑恐惧</div>
+                    <div class="steps-label">实操步骤</div>
+                    <div class="steps">
+                        <div class="step">
+                            <div class="step-dot">1</div>
+                            <div class="step-text">闭上眼睛，<strong>把时间线拉长</strong>。想象两年后，你已经实现了目标，坐在了理想大学的教室里。</div>
+                        </div>
+                        <div class="step">
+                            <div class="step-dot">2</div>
+                            <div class="step-text">仔细看那个画面：周围是什么环境？那个<strong>更优秀、更自信、更快乐的你</strong>，正在做什么？</div>
+                        </div>
+                        <div class="step">
+                            <div class="step-dot">3</div>
+                            <div class="step-text">想象那个未来的你，正微笑着走向现在的你，感谢你现在的辛苦付出。走过去，和那个未来的自己<strong>紧紧拥抱</strong>，互相说几句悄悄话。</div>
+                        </div>
+                        <div class="step">
+                            <div class="step-dot">4</div>
+                            <div class="step-text">记住那个充满力量的画面。当你遇到困难不想学了，就把这个画面调出来——<strong>借未来的力量，赋能现在的自己。</strong></div>
+                        </div>
+                    </div>
+                    <div class="tip-box">💡 高考只是通往未来的一个节点，不是赌博。每当恐惧来袭，就用这个已经实现的未来画面给自己充电。</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 方法3：4-7-8呼吸法 -->
+        <div class="card" onclick="toggleCard(this)">
+            <div class="card-header">
+                <div class="card-num-badge">🌬️</div>
+                <div class="card-meta">
+                    <div class="card-tag">DRY GOODS 03</div>
+                    <div class="card-title">4-7-8 呼吸法</div>
+                    <div class="card-brief">失眠、心慌手抖，2分钟强制镇静大脑</div>
+                </div>
+                <div class="card-arrow">▾</div>
+            </div>
+            <div class="card-body">
+                <div class="card-body-inner">
+                    <div class="scene-tag">🎯 应对：考前失眠、心慌手抖、大脑兴奋</div>
+                    <div class="steps-label">记住三个数字：4 · 7 · 8</div>
+                    <div class="steps">
+                        <div class="step">
+                            <div class="step-dot" style="font-size:13px;font-weight:900;">4</div>
+                            <div class="step-text"><strong>鼻子吸气 4 秒</strong><br>感觉把空气吸进肚子里，小腹慢慢鼓起来（腹式呼吸）。</div>
+                        </div>
+                        <div class="step">
+                            <div class="step-dot" style="font-size:13px;font-weight:900;">7</div>
+                            <div class="step-text"><strong>憋住呼吸 7 秒</strong><br>屏住，让氧气充分溶入血液。</div>
+                        </div>
+                        <div class="step">
+                            <div class="step-dot" style="font-size:13px;font-weight:900;">8</div>
+                            <div class="step-text"><strong>嘴巴呼气 8 秒</strong><br>嘴巴微张，慢慢往外吐气，肚子随着慢慢收回。</div>
+                        </div>
+                    </div>
+                    <div class="tip-box">💡 连做 3 次。大量新鲜氧气进入血液，强制唤醒副交感神经，让心跳变慢、大脑迅速镇静。睡前配合自然场景冥想，不到 2 分钟就能入睡。</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== 考场急救 ========== -->
+    <div class="section during" id="during">
+        <div class="section-header">
+            <div class="section-eyebrow">IN THE EXAM ROOM</div>
+            <div class="section-title">⚡ 考场急救</div>
+            <div class="section-desc">进了考场，这3招帮你随时找回状态</div>
+        </div>
+
+        <!-- 方法4：天地人法 -->
+        <div class="card" onclick="toggleCard(this)">
+            <div class="card-header">
+                <div class="card-num-badge">⚡</div>
+                <div class="card-meta">
+                    <div class="card-tag">RESCUE 04</div>
+                    <div class="card-title">天地人法</div>
+                    <div class="card-brief">发卷前黄金10分钟，给自己「快充」</div>
+                </div>
+                <div class="card-arrow">▾</div>
+            </div>
+            <div class="card-body">
+                <div class="card-body-inner">
+                    <div class="scene-tag">🎯 场景：进考场后、发卷前的10分钟</div>
+                    <div class="steps-label">实操步骤</div>
+                    <div class="steps">
+                        <div class="step">
+                            <div class="step-dot">地</div>
+                            <div class="step-text"><strong>踏地</strong>——平稳坐在椅子上，闭上眼睛。想象双脚稳稳踏着大地，大地的<strong>沉稳与力量</strong>顺着双脚流进你的身体。</div>
+                        </div>
+                        <div class="step">
+                            <div class="step-dot">天</div>
+                            <div class="step-text"><strong>接天</strong>——想象你的头顶出现一道光洒下，宇宙<strong>清醒、智慧的能量</strong>从头顶传达到全身各个部位。</div>
+                        </div>
+                        <div class="step">
+                            <div class="step-dot">人</div>
+                            <div class="step-text"><strong>汇聚</strong>——感受大地的力量与宇宙的能量，在你的胸口汇聚。想象自己就像一节正在<strong>快充的电池</strong>，能量瞬间饱满。</div>
+                        </div>
+                        <div class="step">
+                            <div class="step-dot">✓</div>
+                            <div class="step-text">做几个深呼吸，等老师发卷子时睁开眼——<strong>大脑会异常清醒。</strong></div>
+                        </div>
+                    </div>
+                    <div class="tip-box">💡 进考场后最容易胡思乱想，利用发卷前充电而不是发呆，是高手才会用的技巧。</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 方法5：步步高法 -->
+        <div class="card" onclick="toggleCard(this)">
+            <div class="card-header">
+                <div class="card-num-badge">💪</div>
+                <div class="card-meta">
+                    <div class="card-tag">RESCUE 05</div>
+                    <div class="card-title">步步高法</div>
+                    <div class="card-brief">看到弱势学科就打退堂鼓？瞬间拉升自信</div>
+                </div>
+                <div class="card-arrow">▾</div>
+            </div>
+            <div class="card-body">
+                <div class="card-body-inner">
+                    <div class="scene-tag">🎯 场景：看到弱势科目卷子，极度恐惧退缩</div>
+                    <div class="steps-label">实操步骤</div>
+                    <div class="steps">
+                        <div class="step">
+                            <div class="step-dot">1</div>
+                            <div class="step-text">闭上眼睛，想象你的内在有一个「自己」<strong>站了起来</strong>。</div>
+                        </div>
+                        <div class="step">
+                            <div class="step-dot">2</div>
+                            <div class="step-text">想象这个自己往前走了一步，身体瞬间<strong>变高变大</strong>；再往前走一步，变得更加高大强壮。</div>
+                        </div>
+                        <div class="step">
+                            <div class="step-dot">3</div>
+                            <div class="step-text">与此同时，想象你面前的试卷、课桌、甚至监考老师，都在随着你的变大而<strong>不断缩小</strong>。</div>
+                        </div>
+                        <div class="step">
+                            <div class="step-dot">4</div>
+                            <div class="step-text">直到你感觉自己像个巨人，可以低头俯视并<strong>掌控这张小小的试卷</strong>——带着这种「降维打击」的气场睁开眼睛。</div>
+                        </div>
+                    </div>
+                    <div class="tip-box">💡 恐惧感会在这个瞬间消失。你不是被试卷审视的，你是在掌控它的。拿回你的主动权。</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 方法6：暂存纸法 -->
+        <div class="card" onclick="toggleCard(this)">
+            <div class="card-header">
+                <div class="card-num-badge">📝</div>
+                <div class="card-meta">
+                    <div class="card-tag">RESCUE 06</div>
+                    <div class="card-title">暂存纸法</div>
+                    <div class="card-brief">大脑突然空白？别死磕，用这招解锁记忆</div>
+                </div>
+                <div class="card-arrow">▾</div>
+            </div>
+            <div class="card-body">
+                <div class="card-body-inner">
+                    <div class="scene-tag">🎯 场景：背过的公式死活想不起来</div>
+                    <div class="warning-banner" style="background:#fff8e1;">
+                        <span class="warning-icon">⚠️</span>
+                        <div class="warning-text" style="color:#92400e;">这在心理学上叫<strong>「舌尖现象」</strong>——过度紧张导致的大脑短暂「死机」。越磕，潜意识越锁死。</div>
+                    </div>
+                    <div class="steps-label">正确做法</div>
+                    <div class="steps">
+                        <div class="step">
+                            <div class="step-dot">1</div>
+                            <div class="step-text"><strong>立刻停！</strong>千万不要死磕。先调整一下呼吸，平静下来。</div>
+                        </div>
+                        <div class="step">
+                            <div class="step-dot">2</div>
+                            <div class="step-text">拿过草稿纸，在角落画一个方框，写上<strong>「暂存区」</strong>三个字。</div>
+                        </div>
+                        <div class="step">
+                            <div class="step-dot">3</div>
+                            <div class="step-text">把卡壳那道题的题号写进暂存区，告诉自己：<strong>「我先把题存在这，一会再来取。」</strong></div>
+                        </div>
+                        <div class="step">
+                            <div class="step-dot">4</div>
+                            <div class="step-text">立刻跳过做下一道题。等情绪平复、记忆回路重新连接，回头再看——<strong>答案往往就自然跳出来了。</strong></div>
+                        </div>
+                    </div>
+                    <div class="tip-box">💡 放松是解锁记忆的唯一方式。存题是为了再取，不是放弃。</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== 考后复原 ========== -->
+    <div class="section after" id="after">
+        <div class="section-header">
+            <div class="section-eyebrow">AFTER EACH EXAM</div>
+            <div class="section-title">🌟 考后复原</div>
+            <div class="section-desc">考完一科，用这3招快速清空，全力备战下一场</div>
+        </div>
+
+        <!-- 方法7：绝对禁忌 -->
+        <div class="card" onclick="toggleCard(this)">
+            <div class="card-header">
+                <div class="card-num-badge">🚫</div>
+                <div class="card-meta">
+                    <div class="card-tag">RESCUE 07</div>
+                    <div class="card-title">禁止对答案</div>
+                    <div class="card-brief">对完答案，下一科专注力直接减半</div>
+                </div>
+                <div class="card-arrow">▾</div>
+            </div>
+            <div class="card-body">
+                <div class="card-body-inner">
+                    <div class="warning-banner">
+                        <span class="warning-icon">🚨</span>
+                        <div class="warning-text">这是<strong>绝对禁忌</strong>，不是建议。考完一科，严禁跟任何人对答案！</div>
+                    </div>
+                    <div class="steps-label">为什么？</div>
+                    <div class="steps">
+                        <div class="step">
+                            <div class="step-dot">!</div>
+                            <div class="step-text">心理学讲「未完结事件」是最耗费精力的事。一对答案发现错了，那种懊恼和恐惧，会像<strong>钩子一样死死拉扯你的大脑</strong>，让你无法专注下一科，专注力直接减半。</div>
+                        </div>
+                    </div>
+                    <div class="steps-label" style="margin-top:16px;">正确做法</div>
+                    <div class="steps">
+                        <div class="step">
+                            <div class="step-dot">1</div>
+                            <div class="step-text">考完交卷的瞬间，立刻把试卷收起来。在心里果断告诉自己：<strong>「这门已经结束了，这件事已经过去了。」</strong></div>
+                        </div>
+                        <div class="step">
+                            <div class="step-dot">2</div>
+                            <div class="step-text">迅速切断一切未完结联系——<strong>不讨论、不想象</strong>，全心全意准备下一科，即刻出发。</div>
+                        </div>
+                    </div>
+                    <div class="quote-card">
+                        <div class="quote-text">「过去的过不去，<br>未来的来不了，<br>现在即是全部。」</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 方法8：零极限四句话 -->
+        <div class="card" onclick="toggleCard(this)">
+            <div class="card-header">
+                <div class="card-num-badge">🤍</div>
+                <div class="card-meta">
+                    <div class="card-tag">RESCUE 08</div>
+                    <div class="card-title">零极限四句话</div>
+                    <div class="card-brief">控制不住回想失误？完成这个仪式来清空</div>
+                </div>
+                <div class="card-arrow">▾</div>
+            </div>
+            <div class="card-body">
+                <div class="card-body-inner">
+                    <div class="scene-tag">🎯 场景：脑子里反复回放失误的题目</div>
+                    <div class="steps-label">实操步骤</div>
+                    <div class="steps">
+                        <div class="step">
+                            <div class="step-dot">1</div>
+                            <div class="step-text">考完这科，在心里把这个科目当成一个「人」。比如刚考完语文，就在心里对「语文」深情地说四句话：</div>
+                        </div>
+                    </div>
+                    <div class="four-sentences">
+                        <div class="sentence-row">
+                            <div class="sentence-icon">🌸</div>
+                            <div>
+                                <div class="sentence-main">对不起</div>
+                                <div class="sentence-sub">对不起，刚才有道阅读题我没答完美</div>
+                            </div>
+                        </div>
+                        <div class="sentence-row">
+                            <div class="sentence-icon">🌸</div>
+                            <div>
+                                <div class="sentence-main">请原谅</div>
+                                <div class="sentence-sub">请原谅我刚才的一点小紧张</div>
+                            </div>
+                        </div>
+                        <div class="sentence-row">
+                            <div class="sentence-icon">🌸</div>
+                            <div>
+                                <div class="sentence-main">谢谢你</div>
+                                <div class="sentence-sub">谢谢你这三年陪我熬过的每一个早读</div>
+                            </div>
+                        </div>
+                        <div class="sentence-row">
+                            <div class="sentence-icon">🌸</div>
+                            <div>
+                                <div class="sentence-main">我爱你</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="steps">
+                        <div class="step">
+                            <div class="step-dot">2</div>
+                            <div class="step-text">说完这四句话，在脑海里和它<strong>深深拥抱</strong>，请它祝福你的下一场考试。</div>
+                        </div>
+                    </div>
+                    <div class="tip-box">💡 完成这个极具仪式感的动作，心里那个纠结的疙瘩会瞬间解开，负面情绪被彻底清空。</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 方法9：万能防守话术 -->
+        <div class="card" onclick="toggleCard(this)">
+            <div class="card-header">
+                <div class="card-num-badge">👨‍👩‍👧</div>
+                <div class="card-meta">
+                    <div class="card-tag">RESCUE 09</div>
+                    <div class="card-title">万能防守话术</div>
+                    <div class="card-brief">应对家长和亲戚的「致命追问」</div>
+                </div>
+                <div class="card-arrow">▾</div>
+            </div>
+            <div class="card-body">
+                <div class="card-body-inner">
+                    <div class="scene-tag">🎯 场景：家长、亲戚追问考试情况</div>
+
+                    <div class="sub-section-title">👨‍👩‍👧 给家长</div>
+                    <div class="steps">
+                        <div class="step">
+                            <div class="step-dot">✓</div>
+                            <div class="step-text">孩子走出考场，<strong>什么都别问！</strong>哪怕你心里急得像热锅上的蚂蚁，也要憋着。</div>
+                        </div>
+                        <div class="step">
+                            <div class="step-dot">✓</div>
+                            <div class="step-text">只说这一句：<br><br><strong>「辛苦了，走，带你去吃好吃的！」</strong><br><br>不主动输出焦虑情绪，就是对孩子最大的能量保护。</div>
+                        </div>
+                    </div>
+
+                    <div class="sub-section-title">🎓 给考生</div>
+                    <div class="steps">
+                        <div class="step">
+                            <div class="step-dot">✓</div>
+                            <div class="step-text">遇到亲戚追问，<strong>不要兴奋也不要沮丧</strong>，就说这句万能话：</div>
+                        </div>
+                    </div>
+                    <div class="quote-card" style="margin-top:12px;">
+                        <div class="quote-text">「我觉得发挥出了<br>我的正常水平。」</div>
+                    </div>
+                    <div class="tip-box">💡 这句话没有拉高别人的期待，也不暴露自己的底牌，稳稳守住底线、终结追问——这就是「界限」的力量。</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="footer-line"></div>
+    <div class="footer-title">🧠 高考心理急救包</div>
+    <div class="footer-sub">
+        9个科学方法 · 稳定心态 · 发挥真实水平<br>
+        收藏本页，考前考中考后随时查看
+    </div>
+    <div class="footer-share">📤 转发给需要的同学</div>
+</footer>
+
+<!-- SCROLL TO TOP -->
+<button class="top-btn" id="topBtn" onclick="scrollToTop()" title="回到顶部">↑</button>
+
+<script>
+    // ============ TAB SWITCHING ============
+    function switchTab(tab) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+
+        document.querySelector('.tab[data-tab="' + tab + '"]').classList.add('active');
+        document.getElementById(tab).classList.add('active');
+
+        // Animate new cards
+        setTimeout(initCards, 50);
+
+        // Scroll to tabs
+        var tabsTop = document.querySelector('.tabs-wrap').getBoundingClientRect().top + window.scrollY;
+        window.scrollTo({ top: tabsTop - 4, behavior: 'smooth' });
+    }
+
+    // ============ CARD EXPAND/COLLAPSE ============
+    function toggleCard(card) {
+        var wasOpen = card.classList.contains('open');
+
+        // Close all other cards in same section
+        var section = card.closest('.section');
+        section.querySelectorAll('.card.open').forEach(function(c) {
+            if (c !== card) c.classList.remove('open');
+        });
+
+        card.classList.toggle('open', !wasOpen);
+    }
+
+    // ============ CARD ENTRANCE ANIMATION ============
+    function initCards() {
+        var activeSection = document.querySelector('.section.active');
+        if (!activeSection) return;
+
+        var cards = activeSection.querySelectorAll('.card');
+
+        if ('IntersectionObserver' in window) {
+            var observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry, idx) {
+                    if (entry.isIntersecting) {
+                        var delay = idx * 80;
+                        setTimeout(function() {
+                            entry.target.classList.add('visible');
+                        }, delay);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.08 });
+
+            cards.forEach(function(card) {
+                if (!card.classList.contains('visible')) {
+                    observer.observe(card);
+                }
+            });
+        } else {
+            // Fallback for WeChat browser
+            cards.forEach(function(card, idx) {
+                setTimeout(function() {
+                    card.classList.add('visible');
+                }, idx * 100);
+            });
+        }
+    }
+
+    // ============ SCROLL TO TOP ============
+    var topBtn = document.getElementById('topBtn');
+
+    window.addEventListener('scroll', function() {
+        if (window.scrollY > 300) {
+            topBtn.classList.add('show');
+        } else {
+            topBtn.classList.remove('show');
+        }
+    });
+
+    function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ============ INIT ============
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(initCards, 100);
+    });
+
+    // Fallback if DOMContentLoaded already fired
+    if (document.readyState !== 'loading') {
+        setTimeout(initCards, 100);
+    }
+</script>
+
+</body>
+</html>
