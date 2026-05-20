@@ -1079,269 +1079,242 @@
 </button>
 
 <script>
-    // ============ AUDIO SYSTEM ============
-    var AM = {
-        ctx: null,
-        master: null,
-        ambientOscs: [],
-        arpTimer: null,
-        isOn: false,
-        ready: false,
+// ============================================================
+// AUDIO SYSTEM — 简洁可靠版
+// ============================================================
+var AM = {
+    ctx:    null,
+    master: null,
+    isOn:   false,
+    booted: false,
+    arpTimer: null,
 
-        // 初始化 AudioContext（必须在用户手势后调用）
-        boot: function() {
-            if (this.ready) return;
-            try {
-                window.AudioContext = window.AudioContext || window.webkitAudioContext;
-                this.ctx = new AudioContext();
-                if (this.ctx.state === 'suspended') this.ctx.resume();
-                this.master = this.ctx.createGain();
-                this.master.gain.value = 0;
-                this.master.connect(this.ctx.destination);
-                this.buildAmbient();
-                this.ready = true;
-            } catch(e) {}
-        },
+    /* 第一次用户点击后初始化 */
+    boot: function() {
+        if (this.booted) return;
+        try {
+            window.AudioContext = window.AudioContext || window.webkitAudioContext;
+            this.ctx = new AudioContext();
+            this.master = this.ctx.createGain();
+            this.master.gain.value = 0;
+            this.master.connect(this.ctx.destination);
+            this._buildPads();
+            this.booted = true;
+        } catch (e) {
+            console.warn('Web Audio API 不支持', e);
+        }
+    },
 
-        // 构建冥想背景音：低频泛音 + 慢速 LFO 呼吸感
-        buildAmbient: function() {
-            var ctx = this.ctx;
-            var master = this.master;
+    /* 构建持续播放的冥想底垫音 */
+    _buildPads: function() {
+        var ctx = this.ctx;
+        var out = this.master;
 
-            // 混响模拟（延迟反馈）
-            var delay = ctx.createDelay(3.0);
-            var fbGain = ctx.createGain();
-            var delayOut = ctx.createGain();
-            delay.delayTime.value = 1.4;
-            fbGain.gain.value = 0.45;
-            delayOut.gain.value = 0.22;
-            delay.connect(fbGain); fbGain.connect(delay);
-            delay.connect(delayOut); delayOut.connect(master);
+        /* 简单混响：延迟 + 反馈 */
+        var delay   = ctx.createDelay(2);
+        var fbGain  = ctx.createGain();
+        var wetGain = ctx.createGain();
+        delay.delayTime.value = 1.1;
+        fbGain.gain.value     = 0.35;
+        wetGain.gain.value    = 0.2;
+        delay.connect(fbGain);
+        fbGain.connect(delay);
+        delay.connect(wetGain);
+        wetGain.connect(out);
 
-            // 泛音列（低八度，C2 为根音 65.41Hz）
-            var pads = [
-                { freq: 65.41,  vol: 0.06 },
-                { freq: 98.00,  vol: 0.04 },
-                { freq: 130.81, vol: 0.035 },
-                { freq: 174.61, vol: 0.025 },
-                { freq: 196.00, vol: 0.02  }
-            ];
+        /* C2 和弦底垫：根音 + 五度 + 八度 + 泛音 */
+        var pads = [
+            { f: 65.41,  v: 0.055 },
+            { f: 98.00,  v: 0.038 },
+            { f: 130.81, v: 0.030 },
+            { f: 196.00, v: 0.020 },
+            { f: 261.63, v: 0.014 }
+        ];
 
-            var self = this;
-            pads.forEach(function(p, i) {
-                var osc  = ctx.createOscillator();
-                var gain = ctx.createGain();
-                var lfo  = ctx.createOscillator();
-                var lfoG = ctx.createGain();
-
-                osc.type = 'sine';
-                osc.frequency.value = p.freq;
-                gain.gain.value = p.vol;
-
-                // 慢速呼吸抖动
-                lfo.type = 'sine';
-                lfo.frequency.value = 0.07 + i * 0.025;
-                lfoG.gain.value = p.vol * 0.4;
-                lfo.connect(lfoG); lfoG.connect(gain.gain);
-
-                osc.connect(gain);
-                gain.connect(master);
-                gain.connect(delay);
-
-                osc.start(); lfo.start();
-                self.ambientOscs.push(osc, lfo);
-            });
-        },
-
-        // 五声音阶单音琶音
-        scheduleArp: function() {
-            if (!this.isOn || !this.ready) return;
-            var ctx = this.ctx;
-            var master = this.master;
-            var scale = [261.63, 329.63, 392.00, 440.00, 523.25, 392.00, 329.63];
-            var idx = Math.floor(Math.random() * scale.length);
-            var freq = scale[idx];
-            var now = ctx.currentTime;
-
-            var osc = ctx.createOscillator();
-            var env = ctx.createGain();
-            var filter = ctx.createBiquadFilter();
-            filter.type = 'lowpass';
-            filter.frequency.value = 1200;
-            osc.type = 'sine';
-            osc.frequency.value = freq;
-            env.gain.setValueAtTime(0, now);
-            env.gain.linearRampToValueAtTime(0.055, now + 0.5);
-            env.gain.exponentialRampToValueAtTime(0.001, now + 4.5);
-            osc.connect(filter); filter.connect(env); env.connect(master);
-            osc.start(now); osc.stop(now + 5);
-
-            var self = this;
-            var wait = 3500 + Math.random() * 3000;
-            this.arpTimer = setTimeout(function() { self.scheduleArp(); }, wait);
-        },
-
-        fadeIn: function() {
-            if (!this.ready) return;
-            this.isOn = true;
-            var now = this.ctx.currentTime;
-            this.master.gain.cancelScheduledValues(now);
-            this.master.gain.setValueAtTime(this.master.gain.value, now);
-            this.master.gain.linearRampToValueAtTime(1, now + 2.5);
-            this.scheduleArp();
-        },
-
-        fadeOut: function() {
-            if (!this.ready) return;
-            this.isOn = false;
-            clearTimeout(this.arpTimer);
-            var now = this.ctx.currentTime;
-            this.master.gain.cancelScheduledValues(now);
-            this.master.gain.setValueAtTime(this.master.gain.value, now);
-            this.master.gain.linearRampToValueAtTime(0, now + 1.8);
-        },
-
-        // === UI 音效 ===
-
-        // 清脆短音（Tab 切换）
-        playTick: function() {
-            if (!this.ready) return;
-            var ctx = this.ctx;
-            var now = ctx.currentTime;
-            var osc = ctx.createOscillator();
-            var gain = ctx.createGain();
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(780, now);
-            osc.frequency.exponentialRampToValueAtTime(600, now + 0.07);
-            gain.gain.setValueAtTime(0.18, now);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
-            osc.connect(gain); gain.connect(ctx.destination);
-            osc.start(now); osc.stop(now + 0.12);
-        },
-
-        // 上扬两音（卡片展开）
-        playOpen: function() {
-            if (!this.ready) return;
-            var ctx = this.ctx;
-            var now = ctx.currentTime;
-            [523.25, 659.25].forEach(function(f, i) {
-                var osc  = ctx.createOscillator();
-                var gain = ctx.createGain();
-                var t = now + i * 0.075;
-                osc.type = 'sine';
-                osc.frequency.value = f;
-                gain.gain.setValueAtTime(0.13, t);
-                gain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
-                osc.connect(gain); gain.connect(ctx.destination);
-                osc.start(t); osc.stop(t + 0.4);
-            });
-        },
-
-        // 下滑短音（卡片收起）
-        playClose: function() {
-            if (!this.ready) return;
-            var ctx = this.ctx;
-            var now = ctx.currentTime;
+        pads.forEach(function(p) {
             var osc  = ctx.createOscillator();
             var gain = ctx.createGain();
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(480, now);
-            osc.frequency.exponentialRampToValueAtTime(360, now + 0.18);
-            gain.gain.setValueAtTime(0.12, now);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-            osc.connect(gain); gain.connect(ctx.destination);
-            osc.start(now); osc.stop(now + 0.22);
-        }
-    };
-
-    // ============ AUDIO TOGGLE ============
-    function toggleAudio() {
-        AM.boot();
-        var btn = document.getElementById('audioBtn');
-        if (AM.isOn) {
-            AM.fadeOut();
-            btn.classList.remove('playing');
-            btn.querySelector('.note').textContent = '🎵';
-        } else {
-            AM.fadeIn();
-            btn.classList.add('playing');
-            btn.querySelector('.note').textContent = '🔊';
-        }
-    }
-
-    // ============ TAB SWITCHING ============
-    function switchTab(tab) {
-        AM.boot();
-        AM.playTick();
-
-        document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
-        document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
-
-        document.querySelector('.tab[data-tab="' + tab + '"]').classList.add('active');
-        document.getElementById(tab).classList.add('active');
-
-        setTimeout(initCards, 50);
-
-        var tabsTop = document.querySelector('.tabs-wrap').getBoundingClientRect().top + window.scrollY;
-        window.scrollTo({ top: tabsTop - 4, behavior: 'smooth' });
-    }
-
-    // ============ CARD EXPAND/COLLAPSE ============
-    function toggleCard(card) {
-        AM.boot();
-        var wasOpen = card.classList.contains('open');
-
-        var section = card.closest('.section');
-        section.querySelectorAll('.card.open').forEach(function(c) {
-            if (c !== card) {
-                c.classList.remove('open');
-                AM.playClose();
-            }
+            osc.frequency.value = p.f;
+            gain.gain.value = p.v;
+            osc.connect(gain);
+            gain.connect(out);
+            gain.connect(delay);
+            osc.start();
         });
+    },
 
-        card.classList.toggle('open', !wasOpen);
-        if (!wasOpen) { AM.playOpen(); } else { AM.playClose(); }
-    }
+    /* 随机五声音阶单音，循环播放 */
+    _arp: function() {
+        var self = this;
+        if (!self.isOn || !self.booted) return;
+        var ctx   = self.ctx;
+        var out   = self.master;
+        var scale = [261.63, 329.63, 392.00, 440.00, 523.25];
+        var freq  = scale[Math.floor(Math.random() * scale.length)];
+        var now   = ctx.currentTime;
 
-    // ============ CARD ENTRANCE ANIMATION ============
-    function initCards() {
-        var activeSection = document.querySelector('.section.active');
-        if (!activeSection) return;
-        var cards = activeSection.querySelectorAll('.card');
+        var osc = ctx.createOscillator();
+        var env = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        env.gain.setValueAtTime(0.001, now);
+        env.gain.linearRampToValueAtTime(0.055, now + 0.5);
+        env.gain.exponentialRampToValueAtTime(0.001, now + 4.0);
+        osc.connect(env);
+        env.connect(out);
+        osc.start(now);
+        osc.stop(now + 4.5);
 
-        if ('IntersectionObserver' in window) {
-            var observer = new IntersectionObserver(function(entries) {
-                entries.forEach(function(entry, idx) {
-                    if (entry.isIntersecting) {
-                        setTimeout(function() {
-                            entry.target.classList.add('visible');
-                        }, idx * 80);
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, { threshold: 0.08 });
-            cards.forEach(function(card) {
-                if (!card.classList.contains('visible')) observer.observe(card);
-            });
-        } else {
-            cards.forEach(function(card, idx) {
-                setTimeout(function() { card.classList.add('visible'); }, idx * 100);
-            });
+        var wait = 2800 + Math.random() * 2800;
+        self.arpTimer = setTimeout(function() { self._arp(); }, wait);
+    },
+
+    /* 开启音乐，2秒淡入 */
+    on: function() {
+        if (!this.booted) return;
+        var ctx = this.ctx;
+        if (ctx.state === 'suspended') ctx.resume();
+        this.isOn = true;
+        var now = ctx.currentTime;
+        this.master.gain.cancelScheduledValues(now);
+        this.master.gain.setValueAtTime(0.001, now);
+        this.master.gain.linearRampToValueAtTime(1, now + 2);
+        this._arp();
+    },
+
+    /* 关闭音乐，1.5秒淡出 */
+    off: function() {
+        this.isOn = false;
+        clearTimeout(this.arpTimer);
+        if (!this.booted) return;
+        var ctx = this.ctx;
+        var now = ctx.currentTime;
+        this.master.gain.cancelScheduledValues(now);
+        this.master.gain.setValueAtTime(this.master.gain.value, now);
+        this.master.gain.linearRampToValueAtTime(0, now + 1.5);
+    },
+
+    /* 通用短音效（直连 destination，不受 master 控制） */
+    _beep: function(freq, endFreq, dur, vol) {
+        if (!this.booted) return;
+        var ctx  = this.ctx;
+        var osc  = ctx.createOscillator();
+        var gain = ctx.createGain();
+        var now  = ctx.currentTime;
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now);
+        if (endFreq && endFreq !== freq) {
+            osc.frequency.exponentialRampToValueAtTime(endFreq, now + dur);
         }
-    }
+        gain.gain.setValueAtTime(vol || 0.14, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + dur + 0.02);
+    },
 
-    // ============ SCROLL TO TOP ============
-    window.addEventListener('scroll', function() {
-        document.getElementById('topBtn').classList.toggle('show', window.scrollY > 300);
+    /* Tab 切换：清脆下滑 */
+    playTab: function() { this._beep(760, 580, 0.09, 0.13); },
+
+    /* 卡片展开：上扬双音 */
+    playOpen: function() {
+        this._beep(523, 523, 0.22, 0.10);
+        var self = this;
+        setTimeout(function() { self._beep(659, 659, 0.28, 0.08); }, 90);
+    },
+
+    /* 卡片收起：轻柔下滑 */
+    playClose: function() { this._beep(460, 350, 0.18, 0.09); }
+};
+
+// ============================================================
+// 音乐开关按钮
+// ============================================================
+function toggleAudio() {
+    AM.boot();
+    var btn  = document.getElementById('audioBtn');
+    var note = btn.querySelector('.note');
+    if (AM.isOn) {
+        AM.off();
+        btn.classList.remove('playing');
+        note.textContent = '🎵';
+    } else {
+        AM.on();
+        btn.classList.add('playing');
+        note.textContent = '🔊';
+    }
+}
+
+// ============================================================
+// Tab 切换
+// ============================================================
+function switchTab(tab) {
+    AM.boot();
+    AM.playTab();
+    document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+    document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+    document.querySelector('.tab[data-tab="' + tab + '"]').classList.add('active');
+    document.getElementById(tab).classList.add('active');
+    setTimeout(initCards, 50);
+    var top = document.querySelector('.tabs-wrap').getBoundingClientRect().top + window.scrollY;
+    window.scrollTo({ top: top - 4, behavior: 'smooth' });
+}
+
+// ============================================================
+// 卡片展开 / 收起
+// ============================================================
+function toggleCard(card) {
+    AM.boot();
+    var wasOpen = card.classList.contains('open');
+    card.closest('.section').querySelectorAll('.card.open').forEach(function(c) {
+        if (c !== card) { c.classList.remove('open'); }
     });
+    card.classList.toggle('open', !wasOpen);
+    if (!wasOpen) { AM.playOpen(); } else { AM.playClose(); }
+}
 
-    function scrollToTop() {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+// ============================================================
+// 卡片入场动画
+// ============================================================
+function initCards() {
+    var section = document.querySelector('.section.active');
+    if (!section) return;
+    var cards = section.querySelectorAll('.card');
+    if ('IntersectionObserver' in window) {
+        var obs = new IntersectionObserver(function(entries) {
+            entries.forEach(function(e, i) {
+                if (e.isIntersecting) {
+                    setTimeout(function() { e.target.classList.add('visible'); }, i * 80);
+                    obs.unobserve(e.target);
+                }
+            });
+        }, { threshold: 0.08 });
+        cards.forEach(function(c) { if (!c.classList.contains('visible')) obs.observe(c); });
+    } else {
+        cards.forEach(function(c, i) {
+            setTimeout(function() { c.classList.add('visible'); }, i * 100);
+        });
     }
+}
 
-    // ============ INIT ============
+// ============================================================
+// 回到顶部
+// ============================================================
+window.addEventListener('scroll', function() {
+    document.getElementById('topBtn').classList.toggle('show', window.scrollY > 300);
+});
+function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+// ============================================================
+// 初始化
+// ============================================================
+if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function() { setTimeout(initCards, 100); });
-    if (document.readyState !== 'loading') { setTimeout(initCards, 100); }
+} else {
+    setTimeout(initCards, 100);
+}
 </script>
 
 </body>
