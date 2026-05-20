@@ -665,7 +665,7 @@ var AM={
   init: function(){
     if(this.audio) return;
     this.audio = document.getElementById('bgAudio');
-    this.audio.volume = 0.72;
+    this.audio.volume = 0.28;
   },
 
   on: function(){
@@ -730,7 +730,7 @@ var AM={
 /* Tab 切换 */
 document.querySelectorAll('.tab').forEach(function(t){
   t.addEventListener('click',function(){
-    AM.boot();AM.tab();
+    AM.tab();
     document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active')});
     document.querySelectorAll('.sec').forEach(function(x){x.classList.remove('on')});
     t.classList.add('active');
@@ -742,7 +742,6 @@ document.querySelectorAll('.tab').forEach(function(t){
 
 /* 卡片展开 */
 function toggle(card){
-  AM.boot();
   var was=card.classList.contains('open');
   card.closest('.sec').querySelectorAll('.card.open').forEach(function(c){c.classList.remove('open')});
   card.classList.toggle('open',!was);
