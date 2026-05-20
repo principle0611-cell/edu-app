@@ -1114,16 +1114,35 @@ var AM = {
         if (!this.booted) return;
         this.ctx.resume();
         this.isOn = true;
-        this.master.gain.value = 0.9;   /* 直接赋值，不用调度 */
+        this.master.gain.value = 0.75;
 
         var ctx = this.ctx;
         var out = this.master;
-        /* 底垫：3 个正弦振荡器，音量明显 */
-        [{f:65.41,v:0.12},{f:130.81,v:0.09},{f:196.00,v:0.07}].forEach(function(p){
+
+        /* 背景和弦：以 C4 为重心，轻盈不厚重 */
+        /* C3 只作极轻的基础，不让低音压人 */
+        var pads = [
+            {f: 130.81, v: 0.015},  /* C3 — 若隐若现 */
+            {f: 261.63, v: 0.032},  /* C4 — 重心   */
+            {f: 329.63, v: 0.026},  /* E4 — 明亮   */
+            {f: 392.00, v: 0.020},  /* G4 — 通透   */
+            {f: 523.25, v: 0.012}   /* C5 — 轻盈   */
+        ];
+        pads.forEach(function(p) {
             var o = ctx.createOscillator(), g = ctx.createGain();
-            o.type='sine'; o.frequency.value=p.f; g.gain.value=p.v;
+            o.type = 'sine'; o.frequency.value = p.f; g.gain.value = p.v;
             o.connect(g); g.connect(out); o.start();
         });
+
+        /* 呼吸感：master gain 缓慢起伏，如春风般自然 */
+        var self = this;
+        var t0 = Date.now();
+        self.breatheTimer = setInterval(function() {
+            if (!self.isOn) return;
+            var t = (Date.now() - t0) / 1000;
+            self.master.gain.value = 0.62 + 0.15 * (0.5 + 0.5 * Math.sin(t * 1.0));
+        }, 80);
+
         this._arp();
     },
 
@@ -1131,26 +1150,38 @@ var AM = {
     off: function() {
         this.isOn = false;
         clearTimeout(this.arpTimer);
+        clearInterval(this.breatheTimer);
         if (!this.booted) return;
         this.master.gain.value = 0;
     },
 
-    /* 随机五声音阶单音 */
+    /* 如沐春风旋律：C5-A5 高音区 + triangle 波形（温暖不刺耳） */
     _arp: function() {
         var self = this;
         if (!self.isOn || !self.booted) return;
-        var ctx   = self.ctx;
-        var scale = [261.63, 329.63, 392.00, 440.00, 523.25];
+        var ctx = self.ctx;
+
+        /* C 大调五声 C5-A5：明亮愉悦，无半音紧张 */
+        var scale = [523.25, 587.33, 659.25, 783.99, 880.00, 659.25, 587.33];
         var freq  = scale[Math.floor(Math.random() * scale.length)];
         var now   = ctx.currentTime;
+
         var osc = ctx.createOscillator(), env = ctx.createGain();
-        osc.type = 'sine'; osc.frequency.value = freq;
+        osc.type = 'triangle';   /* 三角波：比 sine 温暖，比方波柔和 */
+        osc.frequency.value = freq;
+
+        /* 缓攻 + 适度持续 + 轻柔收尾，如春风拂面 */
         env.gain.setValueAtTime(0.001, now);
-        env.gain.linearRampToValueAtTime(0.18, now + 0.4);
-        env.gain.exponentialRampToValueAtTime(0.001, now + 3.5);
+        env.gain.linearRampToValueAtTime(0.10, now + 0.35);
+        env.gain.setValueAtTime(0.10,           now + 1.6);
+        env.gain.exponentialRampToValueAtTime(0.001, now + 3.2);
+
         osc.connect(env); env.connect(self.master);
-        osc.start(now); osc.stop(now + 4);
-        self.arpTimer = setTimeout(function(){ self._arp(); }, 2500 + Math.random()*2500);
+        osc.start(now); osc.stop(now + 3.8);
+
+        /* 音符间隔 1.6~3.2 秒，不急不缓 */
+        self.arpTimer = setTimeout(function() { self._arp(); },
+                                   1600 + Math.random() * 1600);
     },
 
     /* 音效：直连 destination，音量充足，与背景音乐独立 */
