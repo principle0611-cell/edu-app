@@ -1078,63 +1078,70 @@
 
 <script>
 // ============================================================
-// AUDIO SYSTEM — 简洁可靠版
+// AUDIO SYSTEM — iOS/微信兼容版（全同步，不用 Promise）
+// iOS 规则：resume() 必须在用户手势的同步代码里调用，
+//           异步 .then() 内调用会被拦截，导致完全无声。
 // ============================================================
 var AM = {
-    ctx:    null,
-    master: null,
-    isOn:   false,
-    booted: false,
-    arpTimer: null,
+    ctx:       null,
+    master:    null,
+    isOn:      false,
+    booted:    false,
+    padsReady: false,
+    arpTimer:  null,
 
-    /* 第一次用户点击后初始化，含 iOS/微信解锁 */
+    /* 在用户点击的同步代码里调用，创建并解锁 AudioContext */
     boot: function() {
         if (this.booted) return;
         try {
-            window.AudioContext = window.AudioContext || window.webkitAudioContext;
-            this.ctx = new AudioContext();
+            var AC = window.AudioContext || window.webkitAudioContext;
+            if (!AC) return;
+            this.ctx    = new AC();
             this.master = this.ctx.createGain();
             this.master.gain.value = 0;
             this.master.connect(this.ctx.destination);
-            /* iOS/微信必须：播放一帧静音来解锁 AudioContext */
-            var unlock = this.ctx.createBuffer(1, 1, 22050);
-            var src    = this.ctx.createBufferSource();
-            src.buffer = unlock;
+            /* 关键：同步调用 resume()，iOS 才会解锁 */
+            this.ctx.resume();
+            /* 再播一帧静音，强制激活（微信双重保险） */
+            var buf = this.ctx.createBuffer(1, 1, 22050);
+            var src = this.ctx.createBufferSource();
+            src.buffer = buf;
             src.connect(this.ctx.destination);
             src.start(0);
-            this._buildPads();
             this.booted = true;
-        } catch (e) {
-            console.warn('Web Audio API 不支持', e);
+        } catch (e) { /* 不支持时静默跳过 */ }
+    },
+
+    /* 确保 context 处于 running 状态（同步） */
+    _wake: function() {
+        if (this.ctx && this.ctx.state !== 'running') {
+            this.ctx.resume();
         }
     },
 
-    /* 构建持续播放的冥想底垫音 */
+    /* 开启音乐时才创建底垫振荡器，避免在 suspended 状态下创建 */
     _buildPads: function() {
+        if (this.padsReady || !this.booted) return;
+        this.padsReady = true;
         var ctx = this.ctx;
         var out = this.master;
 
-        /* 简单混响：延迟 + 反馈 */
         var delay   = ctx.createDelay(2);
         var fbGain  = ctx.createGain();
         var wetGain = ctx.createGain();
         delay.delayTime.value = 1.1;
         fbGain.gain.value     = 0.35;
         wetGain.gain.value    = 0.2;
-        delay.connect(fbGain);
-        fbGain.connect(delay);
-        delay.connect(wetGain);
-        wetGain.connect(out);
+        delay.connect(fbGain); fbGain.connect(delay);
+        delay.connect(wetGain); wetGain.connect(out);
 
-        /* C2 和弦底垫：根音 + 五度 + 八度 + 泛音 */
         var pads = [
-            { f: 65.41,  v: 0.055 },
-            { f: 98.00,  v: 0.038 },
-            { f: 130.81, v: 0.030 },
-            { f: 196.00, v: 0.020 },
-            { f: 261.63, v: 0.014 }
+            {f: 65.41,  v: 0.055},
+            {f: 98.00,  v: 0.038},
+            {f: 130.81, v: 0.030},
+            {f: 196.00, v: 0.020},
+            {f: 261.63, v: 0.014}
         ];
-
         pads.forEach(function(p) {
             var osc  = ctx.createOscillator();
             var gain = ctx.createGain();
@@ -1148,12 +1155,11 @@ var AM = {
         });
     },
 
-    /* 随机五声音阶单音，循环播放 */
+    /* 随机五声音阶单音，定时循环 */
     _arp: function() {
-        var self = this;
+        var self  = this;
         if (!self.isOn || !self.booted) return;
         var ctx   = self.ctx;
-        var out   = self.master;
         var scale = [261.63, 329.63, 392.00, 440.00, 523.25];
         var freq  = scale[Math.floor(Math.random() * scale.length)];
         var now   = ctx.currentTime;
@@ -1165,86 +1171,62 @@ var AM = {
         env.gain.setValueAtTime(0.001, now);
         env.gain.linearRampToValueAtTime(0.055, now + 0.5);
         env.gain.exponentialRampToValueAtTime(0.001, now + 4.0);
-        osc.connect(env);
-        env.connect(out);
-        osc.start(now);
-        osc.stop(now + 4.5);
+        osc.connect(env); env.connect(self.master);
+        osc.start(now); osc.stop(now + 4.5);
 
-        var wait = 2800 + Math.random() * 2800;
-        self.arpTimer = setTimeout(function() { self._arp(); }, wait);
+        self.arpTimer = setTimeout(function() { self._arp(); },
+                                   2800 + Math.random() * 2800);
     },
 
-    /* 开启音乐，2秒淡入；iOS/微信需要等 resume Promise 才能调度 */
+    /* 开启背景音乐 */
     on: function() {
         if (!this.booted) return;
-        var self = this;
-        var ctx  = this.ctx;
-        var start = function() {
-            self.isOn = true;
-            var now = ctx.currentTime;
-            self.master.gain.cancelScheduledValues(now);
-            self.master.gain.setValueAtTime(0.001, now);
-            self.master.gain.linearRampToValueAtTime(1, now + 2);
-            self._arp();
-        };
-        if (ctx.state === 'suspended') {
-            ctx.resume().then(start).catch(start); /* 兼容不支持 Promise 的旧版 */
-        } else {
-            start();
-        }
+        this._wake();          /* 同步 resume */
+        this._buildPads();     /* 在 running 状态下创建振荡器 */
+        this.isOn = true;
+        var now = this.ctx.currentTime;
+        this.master.gain.cancelScheduledValues(now);
+        this.master.gain.setValueAtTime(0.001, now);
+        this.master.gain.linearRampToValueAtTime(1, now + 2);
+        this._arp();
     },
 
-    /* 关闭音乐，1.5秒淡出 */
+    /* 关闭背景音乐 */
     off: function() {
         this.isOn = false;
         clearTimeout(this.arpTimer);
         if (!this.booted) return;
-        var ctx = this.ctx;
-        var now = ctx.currentTime;
+        var now = this.ctx.currentTime;
         this.master.gain.cancelScheduledValues(now);
         this.master.gain.setValueAtTime(this.master.gain.value, now);
         this.master.gain.linearRampToValueAtTime(0, now + 1.5);
     },
 
-    /* 通用短音效（直连 destination，不受 master 控制） */
+    /* 通用音效：全同步，不用 .then() */
     _beep: function(freq, endFreq, dur, vol) {
         if (!this.booted) return;
+        this._wake();
         var ctx  = this.ctx;
-        var self = this;
-        var play = function() {
-            var osc  = ctx.createOscillator();
-            var gain = ctx.createGain();
-            var now  = ctx.currentTime;
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(freq, now);
-            if (endFreq && endFreq !== freq) {
-                osc.frequency.exponentialRampToValueAtTime(endFreq, now + dur);
-            }
-            gain.gain.setValueAtTime(vol || 0.14, now);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.start(now);
-            osc.stop(now + dur + 0.02);
-        };
-        if (ctx.state === 'suspended') {
-            ctx.resume().then(play).catch(play);
-        } else {
-            play();
+        var now  = ctx.currentTime;
+        var osc  = ctx.createOscillator();
+        var gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now);
+        if (endFreq && endFreq !== freq) {
+            osc.frequency.exponentialRampToValueAtTime(endFreq, now + dur);
         }
+        gain.gain.setValueAtTime(vol || 0.14, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.start(now); osc.stop(now + dur + 0.02);
     },
 
-    /* Tab 切换：清脆下滑 */
-    playTab: function() { this._beep(760, 580, 0.09, 0.13); },
-
-    /* 卡片展开：上扬双音 */
-    playOpen: function() {
+    playTab:   function() { this._beep(760, 580, 0.09, 0.13); },
+    playOpen:  function() {
         this._beep(523, 523, 0.22, 0.10);
         var self = this;
         setTimeout(function() { self._beep(659, 659, 0.28, 0.08); }, 90);
     },
-
-    /* 卡片收起：轻柔下滑 */
     playClose: function() { this._beep(460, 350, 0.18, 0.09); }
 };
 
