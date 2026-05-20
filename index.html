@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#ffffff">
 <title>高考心理急救包</title>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 <style>
@@ -99,27 +100,52 @@ body{
 .stat-sep{width:1px;height:28px;background:var(--sep);flex-shrink:0}
 
 /* ═══════════════════════════════════════
-   MUSIC BUTTON
+   FAB 胶囊按钮组（分享 + 音乐）
 ═══════════════════════════════════════ */
-.music-btn{
+.fab-group{
   position:fixed;
   top:calc(14px + env(safe-area-inset-top));right:16px;
-  width:38px;height:38px;border-radius:50%;
-  background:var(--card);
-  box-shadow:0 2px 12px rgba(0,0,0,.12),0 0 0 .5px var(--sep);
-  border:none;cursor:pointer;
+  display:flex;align-items:center;
+  background:rgba(255,255,255,.94);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-radius:999px;
+  box-shadow:0 2px 14px rgba(0,0,0,.12),0 0 0 .5px rgba(0,0,0,.06);
+  z-index:600;overflow:hidden;
+}
+.fab{
+  width:42px;height:42px;
   display:flex;align-items:center;justify-content:center;
-  font-size:17px;z-index:600;
-  transition:transform .18s,background .2s,box-shadow .2s;
+  border:none;background:transparent;cursor:pointer;
+  color:var(--ink2);
+  transition:transform .18s,color .2s;
+  -webkit-tap-highlight-color:transparent;
 }
-.music-btn:active{transform:scale(.88)}
-.music-btn.on{
-  background:var(--c-b);
-  box-shadow:0 4px 18px rgba(79,70,229,.4);
+.fab:active{transform:scale(.86)}
+.fab-sep{
+  width:1px;height:18px;
+  background:rgba(0,0,0,.08);flex-shrink:0;
 }
-.music-btn .ico{display:inline-block}
-.music-btn.on .ico{animation:spin 3s linear infinite}
+#mBtn.on{color:var(--c-b)}
+#mBtn.on .music-ico{animation:spin 4s linear infinite}
 @keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+
+/* ─── Toast 提示 ─── */
+.toast{
+  position:fixed;bottom:calc(96px + env(safe-area-inset-bottom));left:50%;
+  transform:translateX(-50%) translateY(8px);
+  background:rgba(29,29,31,.88);color:#fff;
+  font-size:13px;font-weight:500;
+  padding:9px 18px;border-radius:20px;
+  white-space:nowrap;pointer-events:none;
+  opacity:0;transition:opacity .22s,transform .22s;z-index:999;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ─── 访客数 ─── */
+.footer-visitors{
+  font-size:11.5px;color:var(--ink3);
+  letter-spacing:.3px;margin-bottom:12px;
+}
 
 /* ═══════════════════════════════════════
    SECTION EYEBROW
@@ -407,8 +433,27 @@ body{
 </head>
 <body>
 
-<!-- 音乐按钮 -->
-<button class="music-btn" id="mBtn"><span class="ico">🎵</span></button>
+<!-- FAB 胶囊：分享 + 音乐 -->
+<div class="fab-group">
+  <button class="fab" id="shareBtn" aria-label="分享">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/>
+      <polyline points="16 6 12 2 8 6"/>
+      <line x1="12" y1="2" x2="12" y2="15"/>
+    </svg>
+  </button>
+  <div class="fab-sep"></div>
+  <button class="fab" id="mBtn" aria-label="音乐">
+    <svg class="music-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9 18V5l12-2v13"/>
+      <circle cx="6" cy="18" r="3"/>
+      <circle cx="18" cy="16" r="3"/>
+    </svg>
+  </button>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
 
 <!-- ══ HERO ══ -->
 <header class="hero">
@@ -687,6 +732,7 @@ body{
   <div class="footer-slogan">一人一梦，为家护航 · 做有温度的服务</div>
   <div class="footer-divider"></div>
   <div class="footer-info">高考心理急救包 · 9 个科学方法<br>收藏本页，考前考中考后随时查看</div>
+  <div class="footer-visitors">已有 <span id="busuanzi_value_site_uv">…</span> 人查看</div>
   <div class="footer-copy">一嘉心苑出品</div>
 </footer>
 <button class="topbtn" id="topBtn" onclick="scrollTo({top:0,behavior:'smooth'})">↑</button>
@@ -729,7 +775,6 @@ var AM={
     this.isOn = true;
     var btn=document.getElementById('mBtn');
     btn.classList.add('on');
-    btn.querySelector('.ico').textContent='🎶';
   },
 
   off: function(){
@@ -738,7 +783,6 @@ var AM={
     this.isOn = false;
     var btn=document.getElementById('mBtn');
     btn.classList.remove('on');
-    btn.querySelector('.ico').textContent='🎵';
   },
 
   /* UI 音效：用 Web Audio 轻盈短音 */
@@ -789,9 +833,7 @@ var AM={
     auto.then(function(){
       /* 桌面/部分安卓：直接成功 */
       AM.isOn=true;
-      var btn=document.getElementById('mBtn');
-      btn.classList.add('on');
-      btn.querySelector('.ico').textContent='🎶';
+      document.getElementById('mBtn').classList.add('on');
     }).catch(function(){
       /* iOS/微信：等首次触摸再播 */
       function firstTouch(){
@@ -853,6 +895,44 @@ window.addEventListener('scroll',function(){
 if(document.readyState==='loading'){
   document.addEventListener('DOMContentLoaded',function(){setTimeout(initCards,80)});
 }else{setTimeout(initCards,80)}
+
+/* ─── Toast ─── */
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},2200);
+}
+
+/* ─── 分享按钮 ─── */
+document.getElementById('shareBtn').addEventListener('click',function(){
+  var shareData={
+    title:'高考心理急救包',
+    text:'9个科学减压方法，考前考中考后全程陪伴。冬姐聊教育 · 一嘉心苑出品',
+    url:location.href
+  };
+  if(navigator.share){
+    navigator.share(shareData).catch(function(){});
+  }else{
+    var txt=location.href;
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(function(){
+        showToast('链接已复制，去分享吧 ✓');
+      }).catch(function(){fallbackCopy(txt);});
+    }else{fallbackCopy(txt);}
+  }
+});
+
+function fallbackCopy(txt){
+  var ta=document.createElement('textarea');
+  ta.value=txt;
+  ta.style.cssText='position:fixed;top:-999px;left:-999px;opacity:0';
+  document.body.appendChild(ta);
+  ta.focus();ta.select();
+  try{document.execCommand('copy');showToast('链接已复制 ✓');}
+  catch(e){showToast('请手动复制链接');}
+  document.body.removeChild(ta);
+}
 </script>
 </body>
 </html>
