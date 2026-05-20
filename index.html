@@ -125,8 +125,17 @@ body{
   width:1px;height:18px;
   background:rgba(0,0,0,.08);flex-shrink:0;
 }
-#mBtn.on{color:var(--c-b)}
-#mBtn.on .music-ico{animation:spin 4s linear infinite}
+/* 三态颜色 */
+#mBtn{color:var(--ink3)}
+#mBtn.mode-1{color:var(--c-b)}
+#mBtn.mode-2{color:#D97706}
+/* 图标显隐 */
+#mBtn .ico{display:none}
+#mBtn .ico-0{display:block}
+#mBtn.mode-1 .ico-0{display:none}
+#mBtn.mode-1 .ico-1{display:block;animation:spin 4s linear infinite}
+#mBtn.mode-2 .ico-0{display:none}
+#mBtn.mode-2 .ico-2{display:block}
 @keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
 
 /* ─── Toast 提示 ─── */
@@ -443,11 +452,23 @@ body{
     </svg>
   </button>
   <div class="fab-sep"></div>
-  <button class="fab" id="mBtn" aria-label="音乐">
-    <svg class="music-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+  <button class="fab" id="mBtn" aria-label="音频">
+    <!-- mode-0 静音 -->
+    <svg class="ico ico-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+      <line x1="23" y1="9" x2="17" y2="15"/>
+      <line x1="17" y1="9" x2="23" y2="15"/>
+    </svg>
+    <!-- mode-1 全音（音乐+按键） -->
+    <svg class="ico ico-1" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M9 18V5l12-2v13"/>
       <circle cx="6" cy="18" r="3"/>
       <circle cx="18" cy="16" r="3"/>
+    </svg>
+    <!-- mode-2 仅按键 -->
+    <svg class="ico ico-2" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+      <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
     </svg>
   </button>
 </div>
@@ -756,95 +777,88 @@ body{
 <audio id="bgAudio" loop preload="none" src="music.mp3"></audio>
 
 <script>
-/* ─── 背景音乐：Satie Gymnopédie No.1，默认自动播放 ─── */
-var AM={
+/* ─── 音频管理：三态模式 0=静音 1=全音 2=仅按键 ─── */
+var AM = {
+  mode: 0,   /* 默认静音 */
   audio: null,
-  isOn: false,
+  _ctx: null,
 
   init: function(){
     if(this.audio) return;
     this.audio = document.getElementById('bgAudio');
-    this.audio.volume = 0.17;  /* 原0.28再降40% */
+    this.audio.volume = 0.17;
     this.audio.loop = true;
   },
 
-  on: function(){
+  /* 切到下一个模式 */
+  next: function(){
     this.init();
-    var p = this.audio.play();
-    if(p && p.catch) p.catch(function(){});
-    this.isOn = true;
-    var btn=document.getElementById('mBtn');
-    btn.classList.add('on');
+    this.setMode((this.mode + 1) % 3);
   },
 
-  off: function(){
-    this.init();
-    this.audio.pause();
-    this.isOn = false;
-    var btn=document.getElementById('mBtn');
-    btn.classList.remove('on');
+  setMode: function(m){
+    this.mode = m;
+    /* 音乐控制 */
+    if(m === 1){
+      var p = this.audio.play();
+      if(p && p.catch) p.catch(function(){});
+    } else {
+      this.audio.pause();
+    }
+    /* 更新按钮样式 */
+    var btn = document.getElementById('mBtn');
+    btn.classList.remove('mode-1','mode-2');
+    if(m === 1) btn.classList.add('mode-1');
+    if(m === 2) btn.classList.add('mode-2');
   },
 
-  /* UI 音效：用 Web Audio 轻盈短音 */
-  _ctx: null,
+  /* AudioContext 懒初始化，修复与 HTML5 Audio 共存时的 suspended 问题 */
   _getCtx: function(){
     if(!this._ctx){
       var AC = window.AudioContext || window.webkitAudioContext;
-      if(AC){ this._ctx = new AC(); this._ctx.resume(); }
+      if(AC) this._ctx = new AC();
     }
     return this._ctx;
   },
-  beep: function(f,f2,d,v){
+
+  beep: function(f, f2, d, v){
+    if(this.mode === 0) return;   /* 静音模式跳过 */
     var ctx = this._getCtx(); if(!ctx) return;
-    ctx.resume();
-    var now=ctx.currentTime,o=ctx.createOscillator(),g=ctx.createGain();
-    o.type='sine';
-    o.frequency.setValueAtTime(f,now);
-    if(f2&&f2!==f) o.frequency.exponentialRampToValueAtTime(f2,now+d);
-    g.gain.setValueAtTime(v||0.18,now);
-    g.gain.exponentialRampToValueAtTime(0.001,now+d);
-    o.connect(g); g.connect(ctx.destination);
-    o.start(now); o.stop(now+d+0.02);
+    var play = function(){
+      var now = ctx.currentTime;
+      var o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = 'sine';
+      o.frequency.setValueAtTime(f, now);
+      if(f2 && f2 !== f) o.frequency.exponentialRampToValueAtTime(f2, now + d);
+      g.gain.setValueAtTime(v || 0.18, now);
+      g.gain.exponentialRampToValueAtTime(0.001, now + d);
+      o.connect(g); g.connect(ctx.destination);
+      o.start(now); o.stop(now + d + 0.02);
+    };
+    /* resume 后再播，解决 iOS suspend 导致按键无声的 bug */
+    if(ctx.state === 'suspended'){
+      ctx.resume().then(play);
+    } else {
+      play();
+    }
   },
-  tab:  function(){ this.beep(650,500,0.09,0.16); },
-  open: function(){ this.beep(460,460,0.18,0.14); var s=this; setTimeout(function(){ s.beep(580,580,0.20,0.11); },100); },
-  close:function(){ this.beep(420,320,0.12,0.13); }
+  tab:  function(){ this.beep(650, 500, 0.09, 0.16); },
+  open: function(){ this.beep(460, 460, 0.18, 0.14); var s=this; setTimeout(function(){ s.beep(580, 580, 0.20, 0.11); }, 100); },
+  close:function(){ this.beep(420, 320, 0.12, 0.13); }
 };
 
-/* ── 音乐按钮：点击切换开关 ── */
+/* ── 音频按钮：单键循环三态 ── */
 (function(){
-  var fired=false;
+  var fired = false;
   function h(e){
     e.preventDefault();
-    if(fired){fired=false;return;}
-    fired=true; setTimeout(function(){fired=false;},500);
-    if(AM.isOn){ AM.off(); } else { AM.on(); }
+    if(fired){ fired=false; return; }
+    fired=true; setTimeout(function(){ fired=false; }, 500);
+    AM.next();
   }
-  var b=document.getElementById('mBtn');
-  b.addEventListener('touchstart',h,{passive:false});
-  b.addEventListener('click',h);
-})();
-
-/* ── 自动播放：页面加载尝试直接播；移动端在首次触摸时触发 ── */
-(function(){
-  AM.init();
-  var auto = AM.audio.play();
-  if(auto && auto.then){
-    auto.then(function(){
-      /* 桌面/部分安卓：直接成功 */
-      AM.isOn=true;
-      document.getElementById('mBtn').classList.add('on');
-    }).catch(function(){
-      /* iOS/微信：等首次触摸再播 */
-      function firstTouch(){
-        AM.on();
-        document.removeEventListener('touchstart',firstTouch);
-        document.removeEventListener('click',firstTouch);
-      }
-      document.addEventListener('touchstart',firstTouch,{once:true,passive:true});
-      document.addEventListener('click',firstTouch,{once:true});
-    });
-  }
+  var b = document.getElementById('mBtn');
+  b.addEventListener('touchstart', h, {passive:false});
+  b.addEventListener('click', h);
 })();
 
 /* Tab 切换 */
