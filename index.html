@@ -570,41 +570,40 @@
         }
 
         /* ==================== AUDIO BUTTON ==================== */
+        /* 放在 hero 内部 absolute，不依赖 viewport 宽度 */
         .audio-btn {
-            position: fixed;
-            top: 14px;
+            position: absolute;
+            top: 16px;
             right: 16px;
-            width: 38px;
-            height: 38px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            background: rgba(255,255,255,0.92);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: none;
+            background: rgba(255,255,255,0.22);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1.5px solid rgba(255,255,255,0.4);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 17px;
-            box-shadow: 0 2px 14px rgba(0,0,0,0.15);
-            z-index: 300;
-            transition: transform 0.2s, background 0.3s, box-shadow 0.2s;
+            font-size: 18px;
+            z-index: 10;
+            transition: transform 0.2s, background 0.3s;
+            -webkit-tap-highlight-color: transparent;
         }
-        .audio-btn:active { transform: scale(0.88); }
+        .audio-btn:active { transform: scale(0.85); }
         .audio-btn.playing {
-            background: linear-gradient(135deg, #6366f1, #db2777);
-            box-shadow: 0 4px 18px rgba(99,102,241,0.4);
+            background: rgba(255,255,255,0.35);
+            border-color: rgba(255,255,255,0.7);
+            box-shadow: 0 0 16px rgba(255,255,255,0.3);
         }
-        .audio-btn .note {
-            display: inline-block;
-            transition: transform 0.4s;
-        }
+        .audio-btn .note { display: inline-block; }
         .audio-btn.playing .note {
-            animation: noteFloat 1.8s ease-in-out infinite;
+            animation: noteFloat 1.6s ease-in-out infinite;
         }
         @keyframes noteFloat {
             0%, 100% { transform: translateY(0) rotate(-8deg); }
-            50% { transform: translateY(-3px) rotate(8deg); }
+            50%       { transform: translateY(-4px) rotate(8deg); }
         }
 
         .sub-section-title {
@@ -623,6 +622,10 @@
 
 <!-- HERO -->
 <header class="hero">
+    <!-- 音乐按钮：放在 hero 内，absolute 定位，桌面/手机都能看见 -->
+    <button class="audio-btn" id="audioBtn" onclick="toggleAudio()" title="背景音乐">
+        <span class="note">🎵</span>
+    </button>
     <div class="hero-inner">
         <div class="hero-badge">✨ 心理科学 · 实测有效</div>
         <span class="hero-icon">🧠</span>
@@ -1073,11 +1076,6 @@
 <!-- SCROLL TO TOP -->
 <button class="top-btn" id="topBtn" onclick="scrollToTop()" title="回到顶部">↑</button>
 
-<!-- AUDIO TOGGLE -->
-<button class="audio-btn" id="audioBtn" onclick="toggleAudio()" title="背景音乐">
-    <span class="note">🎵</span>
-</button>
-
 <script>
 // ============================================================
 // AUDIO SYSTEM — 简洁可靠版
@@ -1089,7 +1087,7 @@ var AM = {
     booted: false,
     arpTimer: null,
 
-    /* 第一次用户点击后初始化 */
+    /* 第一次用户点击后初始化，含 iOS/微信解锁 */
     boot: function() {
         if (this.booted) return;
         try {
@@ -1098,6 +1096,12 @@ var AM = {
             this.master = this.ctx.createGain();
             this.master.gain.value = 0;
             this.master.connect(this.ctx.destination);
+            /* iOS/微信必须：播放一帧静音来解锁 AudioContext */
+            var unlock = this.ctx.createBuffer(1, 1, 22050);
+            var src    = this.ctx.createBufferSource();
+            src.buffer = unlock;
+            src.connect(this.ctx.destination);
+            src.start(0);
             this._buildPads();
             this.booted = true;
         } catch (e) {
@@ -1170,17 +1174,24 @@ var AM = {
         self.arpTimer = setTimeout(function() { self._arp(); }, wait);
     },
 
-    /* 开启音乐，2秒淡入 */
+    /* 开启音乐，2秒淡入；iOS/微信需要等 resume Promise 才能调度 */
     on: function() {
         if (!this.booted) return;
-        var ctx = this.ctx;
-        if (ctx.state === 'suspended') ctx.resume();
-        this.isOn = true;
-        var now = ctx.currentTime;
-        this.master.gain.cancelScheduledValues(now);
-        this.master.gain.setValueAtTime(0.001, now);
-        this.master.gain.linearRampToValueAtTime(1, now + 2);
-        this._arp();
+        var self = this;
+        var ctx  = this.ctx;
+        var start = function() {
+            self.isOn = true;
+            var now = ctx.currentTime;
+            self.master.gain.cancelScheduledValues(now);
+            self.master.gain.setValueAtTime(0.001, now);
+            self.master.gain.linearRampToValueAtTime(1, now + 2);
+            self._arp();
+        };
+        if (ctx.state === 'suspended') {
+            ctx.resume().then(start).catch(start); /* 兼容不支持 Promise 的旧版 */
+        } else {
+            start();
+        }
     },
 
     /* 关闭音乐，1.5秒淡出 */
@@ -1199,20 +1210,28 @@ var AM = {
     _beep: function(freq, endFreq, dur, vol) {
         if (!this.booted) return;
         var ctx  = this.ctx;
-        var osc  = ctx.createOscillator();
-        var gain = ctx.createGain();
-        var now  = ctx.currentTime;
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, now);
-        if (endFreq && endFreq !== freq) {
-            osc.frequency.exponentialRampToValueAtTime(endFreq, now + dur);
+        var self = this;
+        var play = function() {
+            var osc  = ctx.createOscillator();
+            var gain = ctx.createGain();
+            var now  = ctx.currentTime;
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now);
+            if (endFreq && endFreq !== freq) {
+                osc.frequency.exponentialRampToValueAtTime(endFreq, now + dur);
+            }
+            gain.gain.setValueAtTime(vol || 0.14, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + dur + 0.02);
+        };
+        if (ctx.state === 'suspended') {
+            ctx.resume().then(play).catch(play);
+        } else {
+            play();
         }
-        gain.gain.setValueAtTime(vol || 0.14, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(now);
-        osc.stop(now + dur + 0.02);
     },
 
     /* Tab 切换：清脆下滑 */
